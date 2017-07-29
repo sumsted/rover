@@ -39,6 +39,7 @@ class RoverEncoders:
                     break
                 else:
                     self.rs.push_status('encoders: unknown command: %s'%command['command'])
+            # todo add delay
         self.rs.push_status('encoders: end encoders, good bye')
 
     def set_base(self):

@@ -44,10 +44,10 @@ class RoverController:
                 command = new_command
                 self.rs.push_sense('set_base', 0)
                 self.rs.push_encoders('set_base', 0)
-                rovermotor.stop()
+                motor.stop()
 
             if command['command'] == 'stop':
-                rovermotor.stop()
+                motor.stop()
 
             elif command['command'] == 'forward':
                 if new_command is not None:
@@ -64,7 +64,7 @@ class RoverController:
                 ultrasonic = self.rs.get_ultrasonic()
                 if ultrasonic['front'] <= 10 or ultrasonic['lower_deviation'] < -50 or \
                                 ultrasonic['lower_devation'] > 50:
-                    rovermotor.stop()
+                    motor.stop()
                     command['command'] = 'stop'
                     self.rs.push_status('controller: proximity warning, all stop, front: %f, lower_deviation: %f, lower: %f' % (
                         ultrasonic['front'], ultrasonic['lower_deviation'], ultrasonic['lower']))
@@ -72,12 +72,12 @@ class RoverController:
                     # check distance and move
                     encoders = self.rs.get_encoders()
                     if encoders['distance'] > command['distance']:
-                        rovermotor.stop()
+                        motor.stop()
                         command['command'] = 'stop'
                         self.rs.push_status('controller: forward distance reached, distance: %f, encoder: %f' % (
                             command['distance'], encoders['distance']))
                     else:
-                        rovermotor.move(command['speed'] + (direction_change / 2),
+                        motor.move(command['speed'] + (direction_change / 2),
                                         command['speed'] + (-1 * (direction_change / 2)))
 
             elif command['command'] == 'rotate':
@@ -96,14 +96,14 @@ class RoverController:
                 # get deviation from sense and adjust
                 sense = self.rs.get_sense()
                 if RoverController.approx(sense['direction_deviation'], sense['direction_base'], 2.0):
-                    rovermotor.stop()
+                    motor.stop()
                     command['command'] = 'stop'
                     self.rs.push_status(
                         'controller: rotation reached, direction: %f, direction_deviation: %f, direction_base: %f' % (
                             sense['direction'], sense['direction_deviation'], sense['direction_base']))
                 else:
                     sign = -1 if sense['direction_deviation'] > 0 else 1
-                    rovermotor.move(sign * command['speed'] / 2, (sign * -1) * command['speed'] / 2)
+                    motor.move(sign * command['speed'] / 2, (sign * -1) * command['speed'] / 2)
 
             elif command['command'] == 'direct':
                 # todo with joystick or other command input
@@ -116,11 +116,11 @@ class RoverController:
             elif command['command'] == 'end':
                 # todo send end to other controllers
                 self.rs.push_status('controller: end command received, ending all controllers')
-                rovermotor.stop()
+                motor.stop()
                 break
             else:
                 self.rs.push_status('controller: unknown command: %s' % command['command'])
-
+            # todo add delay
         self.rs.push_status('controller: end rover, good bye')
 
     @staticmethod

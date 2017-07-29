@@ -70,6 +70,7 @@ class RoverSense:
                     break
                 else:
                     self.rs.push_status('sense: unknown command: %s'%command['command'])
+            # todo add delay
         self.rs.push_status('sense: end sense, good bye')
 
     def set_base(self):

@@ -60,6 +60,7 @@ class RoverLed:
                     self.rs.push_status('led: unknown command: %s'%command['command'])
             else:
                 self.mark_base_direction(sense)
+            # todo add delay
         self.rs.push_status('led: end led, good bye')
 
     def reset_matrix(self):

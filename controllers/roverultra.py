@@ -49,6 +49,7 @@ class RoverUltra:
                     break
                 else:
                     self.rs.push_status('ultra: unknown command: %s' % command['command'])
+            # todo add delay
         self.rs.push_status('ultra: end ultra, good bye')
 
     def get_encoder(self, key):
