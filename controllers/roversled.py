@@ -44,9 +44,23 @@ class RoverLed:
         self.sense.set_rotation(90)
 
     def start(self):
+        self.rs.push_status('led: begin control loop')
         while True:
-            sensors = self.rs.get_sensors()
-            self.mark_base_direction(sensors)
+            sense = self.rs.get_sense()
+
+            # process any commands received, should be few
+            command = self.rs.pop_sense()
+            if command is not None:
+                if command['command'] == 'diagnostic':
+                    self.rs.push_status('led: diagnostics')
+                elif command['command'] == 'end':
+                    self.rs.push_status('led: end command received')
+                    break
+                else:
+                    self.rs.push_status('led: unknown command: %s'%command['command'])
+            else:
+                self.mark_base_direction(sense)
+        self.rs.push_status('led: end led, good bye')
 
     def reset_matrix(self):
         self.led_matrix = [[RoverLed.BLACK for x in range(8)] for y in range(8)]
