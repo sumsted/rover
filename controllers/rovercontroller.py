@@ -10,7 +10,7 @@ if not settings.controller.test:
 else:
     from mock import motor
 
-'''
+"""
 RoverController command processor for rover
 
 Other standalone processors exist for 
@@ -33,7 +33,7 @@ nano1 takes serial request for each motor, rpi must continue to send requests to
 nano1 will halt movement if command not received every half second, safety mechanism
 sensehat is connected to rpi bus and communicates over i2c, will post away from pi with cable to prevent 
 interference both temp and magnetic, map use joystick to post commands back to controller for diagnostics
-'''
+"""
 
 
 class RoverController:
