@@ -1,6 +1,14 @@
-from helpers import motor
+import time
+
+from helpers import settings
 from helpers.pid import Pid
+from helpers.rovermap import RoverMap
 from helpers.rovershare import RoverShare
+
+if not settings.controller.test:
+    from helpers import motor
+else:
+    from mock import motor
 
 '''
 RoverController command processor for rover
@@ -32,6 +40,7 @@ class RoverController:
     def __init__(self):
         self.rs = RoverShare()
         self.pid = Pid()
+        self.map = RoverMap()
         self.rs.push_status('controller: initialization complete')
 
     def start(self):
@@ -58,16 +67,17 @@ class RoverController:
                 # pid
                 sense = self.rs.get_sense()  # has direction
                 direction_change = self.pid.get_correction(sense['direction_deviation'])
-                # self.rs.push_sense('set_correction', direction_change) # todo think about this, lean to not do
 
                 # check distance from obstructions, both straight ahead and drop
                 ultrasonic = self.rs.get_ultrasonic()
-                if ultrasonic['front'] <= 10 or ultrasonic['lower_deviation'] < -50 or \
-                                ultrasonic['lower_devation'] > 50:
+                if ultrasonic['front'] <= settings.controller.safe_distance or \
+                                ultrasonic['lower_deviation'] < -settings.controller.safe_incline or \
+                                ultrasonic['lower_devation'] > settings.controller.safe_incline:
                     motor.stop()
                     command['command'] = 'stop'
-                    self.rs.push_status('controller: proximity warning, all stop, front: %f, lower_deviation: %f, lower: %f' % (
-                        ultrasonic['front'], ultrasonic['lower_deviation'], ultrasonic['lower']))
+                    self.rs.push_status(
+                        'controller: proximity warning, all stop, front: %f, lower_deviation: %f, lower: %f' % (
+                            ultrasonic['front'], ultrasonic['lower_deviation'], ultrasonic['lower']))
                 else:
                     # check distance and move
                     encoders = self.rs.get_encoders()
@@ -78,7 +88,7 @@ class RoverController:
                             command['distance'], encoders['distance']))
                     else:
                         motor.move(command['speed'] + (direction_change / 2),
-                                        command['speed'] + (-1 * (direction_change / 2)))
+                                   command['speed'] + (-1 * (direction_change / 2)))
 
             elif command['command'] == 'rotate':
                 # set new direction
@@ -95,7 +105,8 @@ class RoverController:
 
                 # get deviation from sense and adjust
                 sense = self.rs.get_sense()
-                if RoverController.approx(sense['direction_deviation'], sense['direction_base'], 2.0):
+                if RoverController.approx(sense['direction_deviation'], sense['direction_base'],
+                                          settings.controller.direction_deviation_range):
                     motor.stop()
                     command['command'] = 'stop'
                     self.rs.push_status(
@@ -114,13 +125,20 @@ class RoverController:
                 pass
 
             elif command['command'] == 'end':
-                # todo send end to other controllers
-                self.rs.push_status('controller: end command received, ending all controllers')
                 motor.stop()
+                self.rs.push_status('controller: end command received, ending all controllers')
+                self.rs.push_sense('end', None)
+                self.rs.push_encoders('end', None)
+                self.rs.push_led('end', None)
+                self.rs.push_ultrasonic('end', None)
+                self.rs.push_status('controller: sent end command')
                 break
             else:
                 self.rs.push_status('controller: unknown command: %s' % command['command'])
-            # todo add delay
+
+            # slow things down a bit
+            time.sleep(settings.controller.delay)
+
         self.rs.push_status('controller: end rover, good bye')
 
     @staticmethod

@@ -1,10 +1,10 @@
+import time
+
+from helpers import settings
 from helpers.rovershare import RoverShare
 
 
 class RoverEncoders:
-
-    CIRCUMFERENCE_CM = 20
-    ROTATION_TICKS = 5
 
     def __init__(self):
         self.ticks = 0
@@ -18,7 +18,6 @@ class RoverEncoders:
             'distance': 0
         }
         self.rs = RoverShare()
-        # todo nano address
 
     def start(self):
         self.rs.push_status('encoders: begin control loop')
@@ -26,7 +25,8 @@ class RoverEncoders:
             # always update sensor data
             self.state['ticks'] = self.get_encoder()
             self.state['ticks_delta'] = self.state['ticks'] - self.state['ticks_base']
-            self.state['distance'] = (self.state['ticks_delta'] / RoverEncoders.ROTATION_TICKS) * RoverEncoders.CIRCUMFERENCE_CM
+            self.state['distance'] = (self.state[
+                                          'ticks_delta'] / settings.encoders.rotation_ticks) * settings.encoders.circumference_cm
             self.rs.update_encoders(self.state)
 
             # process any commands received, should be few
@@ -38,15 +38,15 @@ class RoverEncoders:
                     self.rs.push_status('encoders: end command received')
                     break
                 else:
-                    self.rs.push_status('encoders: unknown command: %s'%command['command'])
-            # todo add delay
+                    self.rs.push_status('encoders: unknown command: %s' % command['command'])
+            # slow it down
+            time.sleep(settings.encoders.delay)
         self.rs.push_status('encoders: end encoders, good bye')
 
     def set_base(self):
         self.state['ticks_base'] = self.state['ticks']
 
     def get_encoder(self):
+        # todo send command to serial post response
+        a = settings.encoders.address
         return 0
-
-
-

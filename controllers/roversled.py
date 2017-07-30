@@ -1,7 +1,12 @@
-from sense_hat import SenseHat
+import time
 
+from helpers import settings
 from helpers.rovershare import RoverShare
 
+if not settings.led.test:
+    from sense_hat import SenseHat
+else:
+    from mock.sense_hat import SenseHat
 
 class RoverLed:
 
@@ -49,7 +54,7 @@ class RoverLed:
             sense = self.rs.get_sense()
 
             # process any commands received, should be few
-            command = self.rs.pop_sense()
+            command = self.rs.pop_led()
             if command is not None:
                 if command['command'] == 'diagnostic':
                     self.rs.push_status('led: diagnostics')
@@ -60,7 +65,8 @@ class RoverLed:
                     self.rs.push_status('led: unknown command: %s'%command['command'])
             else:
                 self.mark_base_direction(sense)
-            # todo add delay
+            # adding delay
+            time.sleep(settings.led.delay)
         self.rs.push_status('led: end led, good bye')
 
     def reset_matrix(self):

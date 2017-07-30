@@ -9,6 +9,9 @@ where 0 is low and 1 is high
 record a deviation for 0 where the difference indicates a drop or rise above wheel level
 
 '''
+import time
+
+from helpers import settings
 from helpers.rovershare import RoverShare
 
 
@@ -28,7 +31,6 @@ class RoverUltra:
             'lower_deviation': 0.0
         }
         self.rs = RoverShare()
-        # todo nano address
 
     def start(self):
         self.rs.push_status('Ultra: begin control loop')
@@ -39,19 +41,26 @@ class RoverUltra:
             self.state['front'] = self.get_encoder(RoverUltra.FRONT)
             self.state['right'] = self.get_encoder(RoverUltra.RIGHT)
             self.state['lower_deviation'] = RoverUltra.LOWER_BASE - self.state['lower']
-            self.rs.update_sense(self.state)
+            self.rs.update_ultrasonic(self.state)
 
             # process any commands received, should be few
-            command = self.rs.pop_sense()
+            command = self.rs.pop_ultrasonic()
             if command is not None:
                 if command['command'] == 'end':
                     self.rs.push_status('ultra: end command received')
                     break
                 else:
                     self.rs.push_status('ultra: unknown command: %s' % command['command'])
-            # todo add delay
+            # delay to slow things down
+            time.sleep(settings.ultra.delay)
         self.rs.push_status('ultra: end ultra, good bye')
 
     def get_encoder(self, key):
-        # todo call serial to nano
-        return 0.0
+        # todo call serial to nano and also check test
+        if not settings.ultra.test:
+            a = settings.ultra.address
+            result = 1.0
+        else:
+            # mock
+            result = 0.0
+        return result

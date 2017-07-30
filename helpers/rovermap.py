@@ -1,16 +1,18 @@
-# todo need to think about how to integrate this
+from helpers.rovershare import RoverShare
 
-class RoverMap():
+
+class RoverMap:
 
     def __init__(self):
         self.r_map = {}
+        self.rs = RoverShare()
+        self.rs.clear_map()
 
     def add_item(self, x, y, val):
-        try:
-            self.r_map[x][y] = val
-        except KeyError as e:
-            self.r_map[x] = {}
-            self.r_map[x][y] = val
+        self.rs.add_map(x, y, val)
+
+    def load_map(self):
+        self.r_map = self.rs.get_map()
 
     def get_range(self):
         x_low = 0
@@ -30,6 +32,7 @@ class RoverMap():
         return x_low, x_high, y_low, y_high
 
     def print_map(self):
+        self.load_map()
         r = self.get_range()
         print("    ", end='')
         for x in range(r[0], r[1] + 1):

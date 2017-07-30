@@ -1,8 +1,14 @@
 import math
 
-from sense_hat import SenseHat
+import time
 
+from helpers import settings
 from helpers.rovershare import RoverShare
+
+if not settings.sense.test:
+    from sense_hat import SenseHat
+else:
+    from mock.sense_hat import SenseHat
 
 
 class RoverSense:
@@ -70,7 +76,8 @@ class RoverSense:
                     break
                 else:
                     self.rs.push_status('sense: unknown command: %s'%command['command'])
-            # todo add delay
+            # slow things down
+            time.sleep(settings.sense.delay)
         self.rs.push_status('sense: end sense, good bye')
 
     def set_base(self):
@@ -136,28 +143,11 @@ class RoverSense:
         return val if (val >= 0.0 and val <= 180.0) else -(360.0 - val)
 
     def print_sensor(self):
-        for k, v in self.state:
+        for k, v in self.state.items():
             print('%s: %f ' % (k, v), end='')
         print()
 
 
-'''
- 0 1 2 3 4 5 6 7 
-0      w w          
-1                 
-2                 
-3                 
-4                 
-5                 
-6                 
-7                 
-'''
-
 if __name__ == "__main__":
     rs = RoverSense()
-    # rs.test_matrix()
-    while True:
-        rs.get_orientation()
-        rs.get_direction()
-        rs.get_environment()
-        rs.print_sensor()
+    rs.start()
