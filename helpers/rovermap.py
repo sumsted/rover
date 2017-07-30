@@ -33,14 +33,14 @@ class RoverMap:
 
     def print_map(self):
         self.load_map()
-        r = self.get_range()
+        full_range = self.get_range()
         print("    ", end='')
-        for x in range(r[0], r[1] + 1):
+        for x in range(full_range[0], full_range[1] + 1):
             print(" %2d " % x, end='')
         print("")
-        for y in range(r[3], r[2] - 1, -1):
+        for y in range(full_range[3], full_range[2] - 1, -1):
             print(" %2d " % y, end='')
-            for x in range(r[0], r[1] + 1):
+            for x in range(full_range[0], full_range[1] + 1):
                 try:
                     print("  %s " % self.r_map[x][y], end='')
                 except KeyError:
