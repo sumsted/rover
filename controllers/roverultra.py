@@ -1,5 +1,5 @@
 # todo read ultrasonic sensors 0, 1, 2, 3
-'''
+"""
     0 1
  2       3
 
@@ -8,7 +8,7 @@ where 0 is low and 1 is high
 
 record a deviation for 0 where the difference indicates a drop or rise above wheel level
 
-'''
+"""
 import time
 
 from helpers import settings

@@ -8,8 +8,8 @@ if not settings.led.test:
 else:
     from mock.sense_hat import SenseHat
 
-class RoverLed:
 
+class RoverLed:
     BLACK = [0, 0, 0]
     WHITE = [255, 255, 255]
     BLUE = [0, 0, 255]
@@ -62,7 +62,7 @@ class RoverLed:
                     self.rs.push_status('led: end command received')
                     break
                 else:
-                    self.rs.push_status('led: unknown command: %s'%command['command'])
+                    self.rs.push_status('led: unknown command: %s' % command['command'])
             else:
                 self.mark_base_direction(sense)
             # adding delay

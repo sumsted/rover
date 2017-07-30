@@ -67,15 +67,15 @@ class RoverSense:
             if command is not None:
                 if command['command'] == 'set_heading':
                     self.state['direction_base'] = command['heading']
-                    self.rs.push_status('sense: set_heading: %f'%command['heading'])
+                    self.rs.push_status('sense: set_heading: %f' % command['heading'])
                 elif command['command'] == 'set_correction':
                     self.state['direction_base'] += command['correction']
-                    self.rs.push_status('sense: set_correction: %f'%command['correction'])
+                    self.rs.push_status('sense: set_correction: %f' % command['correction'])
                 elif command['command'] == 'end':
                     self.rs.push_status('sense: end command received')
                     break
                 else:
-                    self.rs.push_status('sense: unknown command: %s'%command['command'])
+                    self.rs.push_status('sense: unknown command: %s' % command['command'])
             # slow things down
             time.sleep(settings.sense.delay)
         self.rs.push_status('sense: end sense, good bye')

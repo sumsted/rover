@@ -5,7 +5,6 @@ from helpers.rovershare import RoverShare
 
 
 class RoverEncoders:
-
     def __init__(self):
         self.ticks = 0
         self.distance = 0
