@@ -60,6 +60,7 @@ class RoverController:
 
             if command['command'] == 'stop':
                 motor.stop()
+                self.rs.push_status('controller: stop')
 
             elif command['command'] == 'forward':
                 if new_command is not None:
