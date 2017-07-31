@@ -1,5 +1,5 @@
+from datetime import datetime
 import json
-
 import redis
 
 from helpers import settings
@@ -28,19 +28,42 @@ class RoverShare:
     def __init__(self):
         self.r = redis.Redis(RoverShare.host, RoverShare.port)
 
+    def clear_all_queues(self):
+        self.clear_commands()
+        self.clear_encoders_queue()
+        self.clear_led_queue()
+        self.clear_sense_queue()
+        self.clear_ultra_queue()
+
+    def push_all_end(self):
+        self.push_command('end')
+        self.push_encoders('end')
+        self.push_led('end')
+        self.push_sense('end')
+        self.push_ultrasonic('end')
+
     ###############################
     # used by main controller
     def clear_commands(self):
         return self.r.delete(RoverShare.command_queue_key)
 
-    def push_command(self, command, parameter):
-        command = {'command': command, 'parameter': parameter}
+    def push_command(self, command, speed=None, heading=None, distance=None, angle=None):
+        command = {'command': command, 'speed': speed, 'heading': heading, 'distance': distance, 'angle': angle}
         serial_json = json.dumps(command)
         return self.r.lpush(RoverShare.command_queue_key, serial_json)
 
     def pop_command(self):
-        serial_json = self.r.rpop(RoverShare.command_queue_key).decode()
-        return json.loads(serial_json)
+        try:
+            serial_json = self.r.rpop(RoverShare.command_queue_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
+
+    def pull_list_n_command(self, num=10):
+        try:
+            return [x.decode() for x in self.r.lrange(RoverShare.command_queue_key, 0, num - 1)]
+        except AttributeError:
+            return None
 
     ###############################
     # used by sense hat controller
@@ -53,8 +76,11 @@ class RoverShare:
         return self.r.lpush(RoverShare.sense_queue_key, serial_json)
 
     def pop_sense(self):
-        serial_json = self.r.rpop(RoverShare.sense_queue_key).decode()
-        return json.loads(serial_json)
+        try:
+            serial_json = self.r.rpop(RoverShare.sense_queue_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
 
     ###############################
     # used by encoders controller
@@ -67,8 +93,11 @@ class RoverShare:
         return self.r.lpush(RoverShare.encoders_queue_key, serial_json)
 
     def pop_encoders(self):
-        serial_json = self.r.rpop(RoverShare.encoders_queue_key).decode()
-        return json.loads(serial_json)
+        try:
+            serial_json = self.r.rpop(RoverShare.encoders_queue_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
 
     ###############################
     # used by led controller
@@ -81,8 +110,11 @@ class RoverShare:
         return self.r.lpush(RoverShare.led_queue_key, serial_json)
 
     def pop_led(self):
-        serial_json = self.r.rpop(RoverShare.led_queue_key).decode()
-        return json.loads(serial_json)
+        try:
+            serial_json = self.r.rpop(RoverShare.led_queue_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
 
     ###############################
     # used by ultra controller
@@ -95,8 +127,11 @@ class RoverShare:
         return self.r.lpush(RoverShare.ultrasonic_queue_key, serial_json)
 
     def pop_ultrasonic(self):
-        serial_json = self.r.rpop(RoverShare.sense_queue_key).decode()
-        return json.loads(serial_json)
+        try:
+            serial_json = self.r.rpop(RoverShare.sense_queue_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
 
     ###############################
     # sense hat state
@@ -105,8 +140,11 @@ class RoverShare:
         return self.r.set(RoverShare.sense_key, serial_json)
 
     def get_sense(self):
-        serial_json = self.r.get(RoverShare.sense_key).decode()
-        return json.loads(serial_json)
+        try:
+            serial_json = self.r.get(RoverShare.sense_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
 
     ###############################
     # ultrasonic state
@@ -115,8 +153,11 @@ class RoverShare:
         return self.r.set(RoverShare.ultrasonic_key, serial_json)
 
     def get_ultrasonic(self):
-        serial_json = self.r.get(RoverShare.ultrasonic_key).decode()
-        return json.loads(serial_json)
+        try:
+            serial_json = self.r.get(RoverShare.ultrasonic_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
 
     ###############################
     # encoder state
@@ -125,8 +166,11 @@ class RoverShare:
         return self.r.set(RoverShare.encoders_key, serial_json)
 
     def get_encoders(self):
-        serial_json = self.r.get(RoverShare.encoders_key).decode()
-        return json.loads(serial_json)
+        try:
+            serial_json = self.r.get(RoverShare.encoders_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
 
     ###############################
     # status list
@@ -134,13 +178,22 @@ class RoverShare:
         return self.r.delete(RoverShare.status_list_key)
 
     def push_status(self, status):
-        return self.r.lpush(RoverShare.status_list_key, status)
+        now = datetime.now()
+        msg = '%s %s' % (now, status or '** chirp chirp **')
+        print(msg)
+        return self.r.lpush(RoverShare.status_list_key, msg)
 
     def pull_last_status(self):
-        return self.r.lindex(RoverShare.status_list_key, 0).decode()
+        try:
+            return self.r.lindex(RoverShare.status_list_key, 0).decode()
+        except AttributeError:
+            return None
 
     def pull_list_n_status(self, num=10):
-        return [x.decode() for x in self.r.lrange(RoverShare.status_list_key, 0, num - 1)]
+        try:
+            return [x.decode() for x in self.r.lrange(RoverShare.status_list_key, 0, num - 1)]
+        except AttributeError:
+            return None
 
     ###############################
     # map hash
@@ -153,19 +206,22 @@ class RoverShare:
         return self.r.hset(RoverShare.map_hash_key, key, serial_json)
 
     def get_map(self):
-        hm = self.r.hgetall(RoverShare.map_hash_key)
-        m = {}
-        for k, v in hm.items():
-            xy = k.decode()
-            x = int(xy[0:8])
-            y = int(xy[9:17])
-            map_val = v.decode()
-            try:
-                m[x][y] = json.loads(map_val)
-            except KeyError:
-                m[x] = {}
-                m[x][y] = json.loads(map_val)
-        return m
+        try:
+            hm = self.r.hgetall(RoverShare.map_hash_key)
+            m = {}
+            for k, v in hm.items():
+                xy = k.decode()
+                x = int(xy[0:8])
+                y = int(xy[9:17])
+                map_val = v.decode()
+                try:
+                    m[x][y] = json.loads(map_val)
+                except KeyError:
+                    m[x] = {}
+                    m[x][y] = json.loads(map_val)
+            return m
+        except AttributeError:
+            return None
 
 
 if __name__ == '__main__':
@@ -173,36 +229,74 @@ if __name__ == '__main__':
     rs = RoverShare()
     print('command')
     print(rs.clear_commands())
-    print(rs.push_command('forward', 50))
+    print(rs.push_command('forward', 50, 40, 30))
     print(rs.push_command('stop', 0))
-    print(rs.push_command('rotate', 45))
-    print(rs.push_command('forward', 20))
-    print(rs.push_command('heading', 264))
+    print(rs.push_command('rotate', 45, 80, 20))
 
     print(rs.pop_command())
     print(rs.pop_command())
     print(rs.pop_command())
 
     print('sensors')
-    print(rs.update_sense({'dd': 34, 'dx': 40}))
-    print(rs.get_sense())
-    print(rs.get_sense())
-    print(rs.update_sense({'dd': 35, 'dx': 41}))
-    print(rs.get_sense())
-    print(rs.update_sense({'dd': -10, 'dx': 42}))
-    print(rs.get_sense())
-    print(rs.update_sense({'dd': -20, 'dx': 43}))
+    print(rs.update_sense(
+        {
+            'temperature': 0.0,
+            'pressure': 0.0,
+            'humidity': 0.0,
+
+            'temperature_base': 0.0,
+            'pressure_base': 0.0,
+            'humidity_base': 0.0,
+
+            'temperature_delta': 0.0,
+            'pressure_delta': 0.0,
+            'humidity_delta': 0.0,
+
+            'pitch': 0.0,
+            'roll': 0.0,
+            'yaw': 0.0,
+
+            'yaw_delta': 0.0,
+            'pitch_delta': 0.0,
+            'roll_delta': 0.0,
+
+            'pitch_base': 0.0,
+            'roll_base': 0.0,
+            'yaw_base': 0.0,
+
+            'direction': 0.0,
+            'direction_delta': 0.0,
+            'direction_base': 0.0,
+            'direction_deviation': 0.0
+        }
+    ))
     print(rs.get_sense())
 
-    print('status')
-    print(rs.clear_status())
-    for i in range(20):
-        print(rs.push_status("status %d" % i))
+    print('encoders')
+    print(rs.update_encoders({
+        'ticks': 0,
+        'ticks_base': 0,
+        'ticks_delta': 0,
+        'distance': 0
+    }))
 
-    rs.pull_last_status()
-    for s in rs.pull_list_n_status(10):
-        print(s)
-
-    rs.pull_last_status()
-    for s in rs.pull_list_n_status(5):
-        print(s)
+    print('ultrasonic')
+    print(rs.update_ultrasonic({
+        'left': 0.0,
+        'lower': 0.0,
+        'front': 0.0,
+        'right': 0.0,
+        'lower_deviation': 0.0
+    }))
+    # print('status')
+    # print(rs.clear_status())
+    # for i in range(20):
+    #     print(rs.push_status("status %d" % i))
+    #
+    # rs.pull_last_status()
+    # for s in rs.pull_list_n_status(10):
+    #     print(s)
+    #
+    # rs.pull_last_status()
+    # for s in rs.pull_list_n_status(5):
+    #     print(s)

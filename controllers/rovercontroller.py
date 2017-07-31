@@ -103,7 +103,7 @@ class RoverController:
                     else:
                         self.rs.push_sense('set_correction', angle)
                     self.rs.push_status('controller: rotate, speed: %f, angle: %f, heading: %f' % (
-                        command['speed'], command['angle'], command['heading']))
+                        command['speed'], command['angle'] or 500, command['heading'] or 500))
 
                 # get deviation from sense and adjust
                 sense = self.rs.get_sense()
