@@ -1,6 +1,8 @@
 import os
 import sys
 
+import time
+
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
@@ -67,6 +69,9 @@ class TestController(TestCase):
         except AttributeError as e:
             self.fail('no status located')
 
+    def delay(self, duration=2):
+        time.sleep(duration)
+
     def test_forward_go(self):
         self.rs.update_ultrasonic({
             'left': 0.0,
@@ -77,30 +82,76 @@ class TestController(TestCase):
         })
 
         self.rs.push_command('forward', 30, 20, 50)
-
+        self.delay()
         self.assert_status('controller: forward', 'controller forward status not found')
 
         self.rs.push_command('stop')
-
+        self.delay()
         self.assert_status('controller: stop', 'controller stop status not found')
 
     def test_forward_proximity(self):
-        # clear queues
-        # clear status
-        # set encoders
-        # set ultrasonics
-        # send command
-        # check status
-        self.assertEqual(0, 0, "No match")
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 0.0,
+            'front': 100.0,
+            'right': 0.0,
+            'lower_deviation': 0.0
+        })
+
+        self.rs.push_command('forward', 30, 20, 50)
+        self.delay()
+        self.assert_status('controller: forward', 'controller forward status not found')
+
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 0.0,
+            'front': 10.0,
+            'right': 0.0,
+            'lower_deviation': 0.0
+        })
+        self.delay()
+        self.assert_status('controller: proximity warning', 'controller proximity warning status not found')
+
+        self.rs.push_command('stop')
+        self.delay()
+        self.assert_status('controller: stop', 'controller stop status not found')
 
     def test_lower_proximity(self):
-        # clear queues
-        # clear status
-        # set encoders
-        # set ultrasonics
-        # send command
-        # check status
-        self.assertEqual(0, 0, "No match")
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 0.0,
+            'front': 100.0,
+            'right': 0.0,
+            'lower_deviation': 0.0
+        })
+
+        self.rs.push_command('forward', 30, 20, 50)
+        self.delay()
+        self.assert_status('controller: forward', 'controller forward status not found')
+
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 51.0,
+            'front': 100.0,
+            'right': 0.0,
+            'lower_deviation': 0.0
+        })
+        self.delay()
+        self.assert_status('controller: proximity warning', 'controller lower positive proximity warning status not found')
+
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': -51.0,
+            'front': 100.0,
+            'right': 0.0,
+            'lower_deviation': 0.0
+        })
+        self.delay()
+        self.assert_status('controller: proximity warning', 'controller lower negative proximity warning status not found')
+
+        self.rs.push_command('stop')
+        self.delay()
+        self.assert_status('controller: stop', 'controller stop status not found')
 
     def test_forward_distance_reached(self):
         # clear queues

@@ -79,8 +79,8 @@ class RoverController:
                 # check distance from obstructions, both straight ahead and drop
                 ultrasonic = self.rs.get_ultrasonic()
                 if ultrasonic['front'] <= settings.controller.safe_distance or \
-                                ultrasonic['lower_deviation'] < -settings.controller.safe_incline or \
-                                ultrasonic['lower_deviation'] > settings.controller.safe_incline:
+                                ultrasonic['lower_deviation'] <= -settings.controller.safe_incline or \
+                                ultrasonic['lower_deviation'] >= settings.controller.safe_incline:
                     motor.stop()
                     command['command'] = 'stop'
                     self.rs.push_status(
