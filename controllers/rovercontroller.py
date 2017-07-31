@@ -43,6 +43,7 @@ class RoverController:
         self.rs = RoverShare()
         self.pid = Pid()
         self.map = RoverMap()
+        self.rs.clear_all_queues()
         self.rs.push_status('controller: initialization complete')
 
     def start(self):
@@ -83,12 +84,14 @@ class RoverController:
                 else:
                     # check distance and move
                     encoders = self.rs.get_encoders()
-                    if encoders['distance'] > command['distance']:
+                    if encoders['distance'] >= command['distance']:
                         motor.stop()
                         command['command'] = 'stop'
                         self.rs.push_status('controller: forward distance reached, distance: %f, encoder: %f' % (
                             command['distance'], encoders['distance']))
                     else:
+                        if encoders['distance'] % 100 == 0:
+                            self.rs.push_status('controller: forward distance travelled: %d' % encoders['distance'])
                         motor.move(command['speed'] + (direction_change / 2),
                                    command['speed'] + (-1 * (direction_change / 2)))
 
