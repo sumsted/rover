@@ -39,6 +39,9 @@ interference both temp and magnetic, map use joystick to post commands back to c
 
 
 class RoverController:
+
+    null_command = {'command': 'null'}
+
     def __init__(self):
         self.rs = RoverShare()
         self.pid = Pid()
@@ -47,7 +50,7 @@ class RoverController:
         self.rs.push_status('controller: initialization complete')
 
     def start(self):
-        command = {'command': 'stop'}
+        command = RoverController.null_command
         self.rs.push_status('controller: begin control loop')
         while True:
 
@@ -61,6 +64,7 @@ class RoverController:
             if command['command'] == 'stop':
                 motor.stop()
                 self.rs.push_status('controller: stop')
+                command = RoverController.null_command
 
             elif command['command'] == 'forward':
                 if new_command is not None:
@@ -139,6 +143,10 @@ class RoverController:
                 self.rs.push_ultrasonic('end', None)
                 self.rs.push_status('controller: sent end command')
                 break
+
+            elif command['command'] == 'null':
+                pass
+
             else:
                 self.rs.push_status('controller: unknown command: %s' % command['command'])
 
