@@ -65,11 +65,20 @@ class TestController(TestCase):
         try:
             s.index(check)
         except ValueError:
-            self.fail(msg)
+            self.fail(msg+', '+s)
         except AttributeError as e:
             self.fail('no status located')
 
-    def delay(self, duration=2):
+    def assert_n_status(self, check, msg, num=50):
+        for s in self.rs.pull_list_n_status(num):
+            try:
+                if s.index(check):
+                    return
+            except ValueError:
+                pass
+        self.fail(msg)
+
+    def delay(self, duration=4):
         time.sleep(duration)
 
     def test_forward_go(self):
@@ -102,6 +111,7 @@ class TestController(TestCase):
         self.delay()
         self.assert_status('controller: forward', 'controller forward status not found')
 
+        self.rs.clear_status()
         self.rs.update_ultrasonic({
             'left': 0.0,
             'lower': 0.0,
@@ -110,13 +120,13 @@ class TestController(TestCase):
             'lower_deviation': 0.0
         })
         self.delay()
-        self.assert_status('controller: proximity warning', 'controller proximity warning status not found')
+        self.assert_n_status('controller: proximity warning', 'controller proximity warning status not found')
 
         self.rs.push_command('stop')
         self.delay()
         self.assert_status('controller: stop', 'controller stop status not found')
 
-    def test_lower_proximity(self):
+    def test_lower_positive_proximity(self):
         self.rs.update_ultrasonic({
             'left': 0.0,
             'lower': 0.0,
@@ -129,25 +139,44 @@ class TestController(TestCase):
         self.delay()
         self.assert_status('controller: forward', 'controller forward status not found')
 
+        self.rs.clear_status()
         self.rs.update_ultrasonic({
             'left': 0.0,
-            'lower': 51.0,
+            'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
-            'lower_deviation': 0.0
+            'lower_deviation': 51.0
         })
         self.delay()
-        self.assert_status('controller: proximity warning', 'controller lower positive proximity warning status not found')
+        self.assert_n_status('controller: proximity warning', 'controller lower positive proximity warning status not found')
 
+        self.rs.push_command('stop')
+        self.delay()
+        self.assert_status('controller: stop', 'controller stop status not found')
+
+    def test_lower_negative_proximity(self):
         self.rs.update_ultrasonic({
             'left': 0.0,
-            'lower': -51.0,
+            'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
             'lower_deviation': 0.0
         })
+
+        self.rs.push_command('forward', 30, 20, 50)
         self.delay()
-        self.assert_status('controller: proximity warning', 'controller lower negative proximity warning status not found')
+        self.assert_status('controller: forward', 'controller forward status not found')
+
+        self.rs.clear_status()
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 0.0,
+            'front': 100.0,
+            'right': 0.0,
+            'lower_deviation': -51.0
+        })
+        self.delay()
+        self.assert_n_status('controller: proximity warning', 'controller lower negative proximity warning status not found')
 
         self.rs.push_command('stop')
         self.delay()
