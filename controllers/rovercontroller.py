@@ -90,7 +90,7 @@ class RoverController:
                         self.rs.push_status('controller: forward distance reached, distance: %f, encoder: %f' % (
                             command['distance'], encoders['distance']))
                     else:
-                        if encoders['distance'] % 100 == 0:
+                        if encoders['distance'] % 20 == 0:
                             self.rs.push_status('controller: forward distance travelled: %d' % encoders['distance'])
                         motor.move(command['speed'] + (direction_change / 2),
                                    command['speed'] + (-1 * (direction_change / 2)))
