@@ -183,10 +183,30 @@ class TestController(TestCase):
         self.assert_status('controller: stop', 'controller stop status not found')
 
     def test_forward_distance_reached(self):
-        # clear queues
-        # clear status
-        # set encoders
-        # set ultrasonics
-        # send command
-        # check status
-        self.assertEqual(0, 0, "No match")
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 0.0,
+            'front': 100.0,
+            'right': 0.0,
+            'lower_deviation': 0.0
+        })
+
+        self.rs.push_command('forward', 30, 20, 50)
+        self.delay()
+        self.assert_status('controller: forward', 'controller forward status not found')
+
+        self.rs.clear_status()
+        self.rs.update_encoders({
+            'ticks': 0,
+            'ticks_base': 0,
+            'ticks_delta': 0,
+            'distance': 51
+        })
+        self.delay()
+        self.assert_n_status('controller: forward distance reached', 'controller expected distance reached not found')
+
+        self.rs.push_command('stop')
+        self.delay()
+        self.assert_status('controller: stop', 'controller stop status not found')
+
+    # todo put a bunch of bad negative tests here to try to break the controller
