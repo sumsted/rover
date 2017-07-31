@@ -227,15 +227,15 @@ class RoverShare:
 if __name__ == '__main__':
     # push 3 commands
     rs = RoverShare()
-    print('command')
-    print(rs.clear_commands())
-    print(rs.push_command('forward', 50, 40, 30))
-    print(rs.push_command('stop', 0))
-    print(rs.push_command('rotate', 45, 80, 20))
-
-    print(rs.pop_command())
-    print(rs.pop_command())
-    print(rs.pop_command())
+    # print('command')
+    # print(rs.clear_commands())
+    # print(rs.push_command('forward', 50, 40, 30))
+    # print(rs.push_command('stop', 0))
+    # print(rs.push_command('rotate', 45, 80, 20))
+    #
+    # print(rs.pop_command())
+    # print(rs.pop_command())
+    # print(rs.pop_command())
 
     print('sensors')
     print(rs.update_sense(
@@ -284,7 +284,7 @@ if __name__ == '__main__':
     print(rs.update_ultrasonic({
         'left': 0.0,
         'lower': 0.0,
-        'front': 0.0,
+        'front': 70.0,
         'right': 0.0,
         'lower_deviation': 0.0
     }))
