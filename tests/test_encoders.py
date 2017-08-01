@@ -6,10 +6,10 @@ import time
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
-
 from unittest import TestCase
 
-class TestController(TestCase):
+
+class TestEncoders(TestCase):
 
     def setUp(self):
         self.rs = RoverShare()

@@ -140,7 +140,7 @@ class RoverShare:
 
     def pop_ultrasonic(self):
         try:
-            serial_json = self.r.rpop(RoverShare.sense_queue_key).decode()
+            serial_json = self.r.rpop(RoverShare.ultrasonic_queue_key).decode()
             return json.loads(serial_json)
         except AttributeError:
             return None

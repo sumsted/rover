@@ -6,10 +6,10 @@ import time
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
-
 from unittest import TestCase
 
-class TestController(TestCase):
+
+class TestUltrasonic(TestCase):
 
     def setUp(self):
         self.rs = RoverShare()
@@ -81,6 +81,6 @@ class TestController(TestCase):
         time.sleep(duration)
 
     def test_unknown_command(self):
-        self.rs.push_encoders('set_your_face', None)
+        self.rs.push_ultrasonic('set_your_face', None)
         self.delay()
         self.assert_status('ultra: unknown command', 'encoder unknown command status not found')
