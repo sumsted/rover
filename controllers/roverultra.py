@@ -67,3 +67,8 @@ class RoverUltra:
             # mock
             result = 0.0
         return result
+
+
+if __name__ == '__main__':
+    rc = RoverUltra()
+    rc.start()
