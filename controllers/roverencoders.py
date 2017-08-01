@@ -1,5 +1,7 @@
+import os
 import time
-
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
 
@@ -33,6 +35,7 @@ class RoverEncoders:
             if command is not None:
                 if command['command'] == 'set_base':
                     self.set_base()
+                    self.rs.push_status('encoders: base set')
                 elif command['command'] == 'end':
                     self.rs.push_status('encoders: end command received')
                     break

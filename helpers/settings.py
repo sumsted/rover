@@ -50,6 +50,7 @@ class share:
     test = False
     host = '192.168.3.6'
     port = 6379
+    delay = 1.0
     command_queue_key = 'command_queue'
     sense_key = 'sense'
     sense_queue_key = 'sense_queue'

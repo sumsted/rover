@@ -212,7 +212,7 @@ class TestController(TestCase):
     def test_rotate_angle(self):
         self.rs.push_command('rotate', speed=50, angle=90)
         self.delay()
-        self.assert_status('controller: rotate', 'controller rotate status not found')
+        self.assert_n_status('controller: rotate', 'controller rotate status not found')
 
         self.rs.push_command('stop')
         self.delay()
@@ -221,7 +221,7 @@ class TestController(TestCase):
     def test_rotate_heading(self):
         self.rs.push_command('rotate', speed=50, heading=90)
         self.delay()
-        self.assert_status('controller: rotate', 'controller rotate status not found')
+        self.assert_n_status('controller: rotate', 'controller rotate status not found')
 
         self.rs.push_command('stop')
         self.delay()
@@ -231,3 +231,7 @@ class TestController(TestCase):
         self.rs.push_command('stop')
         self.delay()
         self.assert_status('controller: stop', 'controller stop status not found')
+
+    def test_unknown_command(self):
+        self.rs.push_command('set_your_face', None)
+        self.assert_status('controller: unknown command', 'encoder unknown command status not found')

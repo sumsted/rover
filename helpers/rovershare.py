@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import time
 import redis
 
 from helpers import settings
@@ -25,8 +26,6 @@ class RoverShare:
 
     map_hash_key = settings.share.map_hash_key
 
-    navigation_key = settings.share.navigation_key # todo add method to record delta and base
-
     def __init__(self):
         self.r = redis.Redis(RoverShare.host, RoverShare.port)
 
@@ -43,6 +42,9 @@ class RoverShare:
         self.push_led('end')
         self.push_sense('end')
         self.push_ultrasonic('end')
+
+    def delay(self, duration=None):
+        time.sleep(duration or settings.share.delay)
 
     ###############################
     # used by main controller
@@ -75,7 +77,9 @@ class RoverShare:
     def push_sense(self, command, parameter):
         command = {'command': command, 'parameter': parameter}
         serial_json = json.dumps(command)
-        return self.r.lpush(RoverShare.sense_queue_key, serial_json)
+        result = self.r.lpush(RoverShare.sense_queue_key, serial_json)
+        self.delay()
+        return result
 
     def pop_sense(self):
         try:
@@ -92,7 +96,9 @@ class RoverShare:
     def push_encoders(self, command, parameter):
         command = {'command': command, 'parameter': parameter}
         serial_json = json.dumps(command)
-        return self.r.lpush(RoverShare.encoders_queue_key, serial_json)
+        result = self.r.lpush(RoverShare.encoders_queue_key, serial_json)
+        self.delay()
+        return result
 
     def pop_encoders(self):
         try:
@@ -109,7 +115,9 @@ class RoverShare:
     def push_led(self, command, parameter):
         command = {'command': command, 'parameter': parameter}
         serial_json = json.dumps(command)
-        return self.r.lpush(RoverShare.led_queue_key, serial_json)
+        result = self.r.lpush(RoverShare.led_queue_key, serial_json)
+        self.delay()
+        return result
 
     def pop_led(self):
         try:
@@ -126,7 +134,9 @@ class RoverShare:
     def push_ultrasonic(self, command, parameter):
         command = {'command': command, 'parameter': parameter}
         serial_json = json.dumps(command)
-        return self.r.lpush(RoverShare.ultrasonic_queue_key, serial_json)
+        result = self.r.lpush(RoverShare.ultrasonic_queue_key, serial_json)
+        self.delay()
+        return result
 
     def pop_ultrasonic(self):
         try:
@@ -224,16 +234,6 @@ class RoverShare:
             return m
         except AttributeError:
             return None
-
-    ###############################
-    # map hash
-    def update_navigation(self, direction, delta):
-        if direction is not None:
-            return self.r.set(RoverShare.navigation_key, direction)
-        else:
-            dir = self.r.get(RoverShare.navigation_key)
-            return self.r.set(RoverShare.navigation_key, dir + delta)
-
 
 
 if __name__ == '__main__':
