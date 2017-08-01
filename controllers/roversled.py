@@ -1,4 +1,7 @@
+import os
 import time
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 
 from helpers import settings
 from helpers.rovershare import RoverShare
@@ -47,6 +50,7 @@ class RoverLed:
         self.rs = RoverShare()
         self.led_matrix = [[RoverLed.BLACK for x in range(8)] for y in range(8)]
         self.sense.set_rotation(90)
+        self.rs.push_status('led: initialization complete')
 
     def start(self):
         self.rs.push_status('led: begin control loop')
@@ -100,3 +104,8 @@ class RoverLed:
         self.led_matrix[0][4] = RoverLed.WHITE
         self.led_matrix[0][5] = RoverLed.BLUE
         self.draw_matrix()
+
+
+if __name__ == '__main__':
+    rc = RoverLed()
+    rc.start()
