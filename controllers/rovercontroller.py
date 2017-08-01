@@ -148,7 +148,9 @@ class RoverController:
                 pass
 
             else:
-                self.rs.push_status('controller: unknown command: %s' % command['command'])
+                if new_command is not None:
+                    motor.stop()
+                    self.rs.push_status('controller: unknown command: %s' % command['command'])
 
             # slow things down a bit
             time.sleep(settings.controller.delay)
