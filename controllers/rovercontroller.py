@@ -49,6 +49,10 @@ class RoverController:
         self.rs.clear_all_queues()
         self.rs.push_status('controller: initialization complete')
 
+    # todo break out each command into own method so
+    # 1. isolate into testable components
+    # 2. allow each command it's own loop so that commands can complete without new command interference
+    # 3. monitor command run from main loop to time box commands preventing overrun
     def start(self):
         command = RoverController.null_command
         self.rs.push_status('controller: begin control loop')
