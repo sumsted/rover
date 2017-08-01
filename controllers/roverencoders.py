@@ -52,3 +52,8 @@ class RoverEncoders:
         # todo send command to serial post response
         a = settings.encoders.address
         return 0
+
+
+if __name__ == '__main__':
+    rc = RoverEncoders()
+    rc.start()
