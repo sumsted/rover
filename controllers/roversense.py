@@ -1,7 +1,8 @@
 import math
-
+import os
 import time
-
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
 

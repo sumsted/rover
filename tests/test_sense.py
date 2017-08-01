@@ -9,7 +9,7 @@ from helpers.rovershare import RoverShare
 from unittest import TestCase
 
 
-class TestLed(TestCase):
+class TestSense(TestCase):
 
     def setUp(self):
         self.rs = RoverShare()
@@ -80,71 +80,17 @@ class TestLed(TestCase):
     def delay(self, duration=4):
         time.sleep(duration)
 
-    def test_deviation(self):
-        self.rs.update_sense({
-            'temperature': 0.0,
-            'pressure': 0.0,
-            'humidity': 0.0,
-
-            'temperature_base': 0.0,
-            'pressure_base': 0.0,
-            'humidity_base': 0.0,
-
-            'temperature_delta': 0.0,
-            'pressure_delta': 0.0,
-            'humidity_delta': 0.0,
-
-            'pitch': 0.0,
-            'roll': 0.0,
-            'yaw': 0.0,
-
-            'yaw_delta': 0.0,
-            'pitch_delta': 0.0,
-            'roll_delta': 0.0,
-
-            'pitch_base': 0.0,
-            'roll_base': 0.0,
-            'yaw_base': 0.0,
-
-            'direction': 0.0,
-            'direction_delta': 0.0,
-            'direction_base': 0.0,
-            'direction_deviation': 45.0
-        })
+    def test_heading(self):
+        self.rs.push_sense('set_heading', None)
         self.delay()
-        self.rs.update_sense({
-            'temperature': 0.0,
-            'pressure': 0.0,
-            'humidity': 0.0,
+        self.assert_status('sense: set_heading', 'sense set heading status not found')
 
-            'temperature_base': 0.0,
-            'pressure_base': 0.0,
-            'humidity_base': 0.0,
-
-            'temperature_delta': 0.0,
-            'pressure_delta': 0.0,
-            'humidity_delta': 0.0,
-
-            'pitch': 0.0,
-            'roll': 0.0,
-            'yaw': 0.0,
-
-            'yaw_delta': 0.0,
-            'pitch_delta': 0.0,
-            'roll_delta': 0.0,
-
-            'pitch_base': 0.0,
-            'roll_base': 0.0,
-            'yaw_base': 0.0,
-
-            'direction': 0.0,
-            'direction_delta': 0.0,
-            'direction_base': 0.0,
-            'direction_deviation': -45.0
-        })
+    def test_correction(self):
+        self.rs.push_sense('set_correction', None)
         self.delay()
+        self.assert_status('sense: set_correction', 'sense set correction status not found')
 
     def test_unknown_command(self):
         self.rs.push_led('set_your_face', None)
         self.delay()
-        self.assert_status('led: unknown command', 'encoder unknown command status not found')
+        self.assert_status('led: unknown command', 'sense unknown command status not found')

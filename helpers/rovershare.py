@@ -74,8 +74,8 @@ class RoverShare:
     def clear_sense_queue(self):
         return self.r.delete(RoverShare.sense_queue_key)
 
-    def push_sense(self, command, parameter):
-        command = {'command': command, 'parameter': parameter}
+    def push_sense(self, command, heading=None, correction=None):
+        command = {'command': command, 'heading': heading, 'correction': correction}
         serial_json = json.dumps(command)
         result = self.r.lpush(RoverShare.sense_queue_key, serial_json)
         self.delay()
