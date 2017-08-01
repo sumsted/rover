@@ -81,7 +81,7 @@ class TestController(TestCase):
     def delay(self, duration=4):
         time.sleep(duration)
 
-    def test_forward_go(self):
+    def test_forward(self):
         self.rs.update_ultrasonic({
             'left': 0.0,
             'lower': 0.0,
@@ -209,4 +209,25 @@ class TestController(TestCase):
         self.delay()
         self.assert_status('controller: stop', 'controller stop status not found')
 
-    # todo put a bunch of bad negative tests here to try to break the controller
+    def test_rotate_angle(self):
+        self.rs.push_command('rotate', speed=50, angle=90)
+        self.delay()
+        self.assert_status('controller: rotate', 'controller rotate status not found')
+
+        self.rs.push_command('stop')
+        self.delay()
+        self.assert_status('controller: stop', 'controller stop status not found')
+
+    def test_rotate_heading(self):
+        self.rs.push_command('rotate', speed=50, heading=90)
+        self.delay()
+        self.assert_status('controller: rotate', 'controller rotate status not found')
+
+        self.rs.push_command('stop')
+        self.delay()
+        self.assert_status('controller: stop', 'controller stop status not found')
+
+    def test_stop(self):
+        self.rs.push_command('stop')
+        self.delay()
+        self.assert_status('controller: stop', 'controller stop status not found')

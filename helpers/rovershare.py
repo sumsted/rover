@@ -25,6 +25,8 @@ class RoverShare:
 
     map_hash_key = settings.share.map_hash_key
 
+    navigation_key = settings.share.navigation_key # todo add method to record delta and base
+
     def __init__(self):
         self.r = redis.Redis(RoverShare.host, RoverShare.port)
 
@@ -222,6 +224,16 @@ class RoverShare:
             return m
         except AttributeError:
             return None
+
+    ###############################
+    # map hash
+    def update_navigation(self, direction, delta):
+        if direction is not None:
+            return self.r.set(RoverShare.navigation_key, direction)
+        else:
+            dir = self.r.get(RoverShare.navigation_key)
+            return self.r.set(RoverShare.navigation_key, dir + delta)
+
 
 
 if __name__ == '__main__':
