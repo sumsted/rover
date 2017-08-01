@@ -82,10 +82,10 @@ class RoverLed:
             pixels += row
         self.sense.set_pixels(pixels)
 
-    def mark_base_direction(self, sensors):
+    def mark_base_direction(self, sense):
         map_dev = 10
         self.reset_matrix()
-        if sensors.direction_deviation < 0:
+        if sense['direction_deviation'] < 0:
             self.led_matrix[0][3] = RoverLed.RED
             self.led_matrix[0][4] = RoverLed.RED
         else:
@@ -93,7 +93,7 @@ class RoverLed:
             self.led_matrix[0][4] = RoverLed.GREEN
 
         for k in RoverLed.DEVIATION_GUIDE:
-            if sensors.direction_deviation > (k - map_dev) and sensors.direction_deviation < (k + map_dev):
+            if sense['direction_deviation'] > (k - map_dev) and sense['direction_deviation'] < (k + map_dev):
                 for coordinates in RoverLed.DEVIATION_GUIDE[k]:
                     self.led_matrix[coordinates[0]][coordinates[1]] = RoverLed.WHITE
                 break
