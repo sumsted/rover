@@ -31,7 +31,7 @@ class RoverEncoders:
             self.rs.update_encoders(self.state)
 
             # process any commands received, should be few
-            command = self.rs.pop_sense()
+            command = self.rs.pop_encoders()
             if command is not None:
                 if command['command'] == 'set_base':
                     self.set_base()
