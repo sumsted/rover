@@ -81,12 +81,12 @@ class TestSense(TestCase):
         time.sleep(duration)
 
     def test_heading(self):
-        self.rs.push_sense('set_heading', None)
+        self.rs.push_sense('set_heading', heading=91.0)
         self.delay()
         self.assert_status('sense: set_heading', 'sense set heading status not found')
 
     def test_correction(self):
-        self.rs.push_sense('set_correction', None)
+        self.rs.push_sense('set_correction', correction=1.0)
         self.delay()
         self.assert_status('sense: set_correction', 'sense set correction status not found')
 
