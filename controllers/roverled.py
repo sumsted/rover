@@ -69,6 +69,10 @@ class RoverLed:
                     self.rs.push_status('led: unknown command: %s' % command['command'])
             else:
                 self.mark_base_direction(sense)
+                # todo monitor ultrasonic sensors and map inside direction
+                # green open, blue found, red proximity warning
+                # todo map overall health to 4 inner leds
+                # blue healthy, red not healthy, what is health?
             # adding delay
             time.sleep(settings.led.delay)
         self.rs.push_status('led: end led, good bye')
