@@ -9,8 +9,10 @@ where 0 is low and 1 is high
 record a deviation for 0 where the difference indicates a drop or rise above wheel level
 
 """
+import os
 import time
-
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
 
@@ -31,9 +33,10 @@ class RoverUltra:
             'lower_deviation': 0.0
         }
         self.rs = RoverShare()
+        self.rs.push_status('ultra: initialization complete')
 
     def start(self):
-        self.rs.push_status('Ultra: begin control loop')
+        self.rs.push_status('ultra: begin control loop')
         while True:
             # always update sensor data
             self.state['left'] = self.get_encoder(RoverUltra.LEFT)

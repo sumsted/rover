@@ -234,4 +234,5 @@ class TestController(TestCase):
 
     def test_unknown_command(self):
         self.rs.push_command('set_your_face', None)
+        self.delay()
         self.assert_status('controller: unknown command', 'encoder unknown command status not found')
