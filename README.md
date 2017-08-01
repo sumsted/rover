@@ -37,3 +37,6 @@ Other
 - nano1 will halt movement if command not received every half second, safety mechanism
 - sensehat is connected to rpi bus and communicates over i2c, will post away from pi with cable to prevent 
 - interference both temp and magnetic, map use joystick to post commands back to controller for diagnostics
+
+remember
+- add another pi for vision 
