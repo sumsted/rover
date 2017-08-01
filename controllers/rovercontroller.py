@@ -163,7 +163,7 @@ class RoverController:
 
     @staticmethod
     def approx(x, y, d):
-        return return abs(x - y) < d
+        return abs(x - y) < d
 
 
 if __name__ == '__main__':
