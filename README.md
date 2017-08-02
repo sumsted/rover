@@ -43,7 +43,10 @@ Other
 - add vision processor and stereoscopic view with ir rpi and std rpi cameras
 - joystick mode pulling for gopi and dragonbot projects using pygame and xbox360 controller running on rover control workstation
 
-### Wiring
+### System Architecture
 
+![Architecture](/static/images/arch.png)
+
+### Wiring
 
 ![Wiring](/static/images/rover.png)
