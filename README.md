@@ -44,9 +44,9 @@ Other
 - joystick mode pulling for gopi and dragonbot projects using pygame and xbox360 controller running on rover control workstation
 
 ### System Architecture
-The System consists of several controllers each managing a separate piece of the rover. Redis is used as a conduit to queue 
+The system consists of several controllers each managing a separate piece of the rover. Redis is used to centrally queue 
 commands to controllers and to hold the current state of all sensor readings. As the controllers are all independent they 
-may run on the same or separate raspberry pis. New controllers may be add to system, say to handle vision processing, 
+may run on the same or separate raspberry pis. New controllers may be added to the system, say to handle vision processing, 
 without impacting the other controllers.
 ![Architecture](/static/images/arch.png)
 
