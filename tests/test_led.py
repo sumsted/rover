@@ -194,15 +194,15 @@ class TestLed(TestCase):
         })
         self.delay()
 
-        def test_ultrasonic_map(self):gi
-            self.rs.update_ultrasonic({
-                'left': 400.0,
-                'lower': -10.0,
-                'front': 400.0,
-                'right': 400.0,
-                'lower_deviation': -10.0
-            })
-            self.delay()
+    def test_ultrasonic_map(self):
+        self.rs.update_ultrasonic({
+            'left': 400.0,
+            'lower': -10.0,
+            'front': 400.0,
+            'right': 400.0,
+            'lower_deviation': -10.0
+        })
+        self.delay()
 
 
     def test_unknown_command(self):
