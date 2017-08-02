@@ -1,6 +1,7 @@
 import os
 import time
 import sys
+
 sys.path.insert(0, os.path.abspath('..'))
 
 from helpers import settings
@@ -45,6 +46,29 @@ class RoverLed:
         180: [[7, 3], [7, 4]]
     }
 
+    ULTRASONIC_GUIDE = {
+        'left': [[3, 2], [4, 2]],
+        'lower': [[2, 3]],
+        'front': [[2, 4]],
+        'right': [[3, 5], [4, 5]]
+    }
+
+    HEART_BEAT = [
+        [255, 255, 255, .1],
+        [100, 0, 0, .1],
+        [200, 0, 0, .1],
+        [255, 0, 0, .1],
+        [200, 0, 0, .1],
+        [100, 0, 0, .1],
+        [200, 0, 0, .1],
+        [255, 0, 0, .1],
+        [255, 255, 255, .1],
+    ]
+
+    HEART_BEAT_GUIDE = [
+        [3, 3], [3, 4], [4, 3], [4, 4]
+    ]
+
     def __init__(self):
         self.sense = SenseHat()
         self.rs = RoverShare()
@@ -68,11 +92,12 @@ class RoverLed:
                 else:
                     self.rs.push_status('led: unknown command: %s' % command['command'])
             else:
+                self.reset_matrix()
+                self.mark_ultrasonic()
                 self.mark_base_direction(sense)
-                # todo monitor ultrasonic sensors and map inside direction
-                # green open, blue found, red proximity warning
-                # todo map overall health to 4 inner leds
-                # blue healthy, red not healthy, what is health?
+                self.draw_matrix()
+                self.heart_beat()
+
             # adding delay
             time.sleep(settings.led.delay)
         self.rs.push_status('led: end led, good bye')
@@ -86,9 +111,29 @@ class RoverLed:
             pixels += row
         self.sense.set_pixels(pixels)
 
+    def heart_beat(self):
+        for beat in RoverLed.HEART_BEAT:
+            for coordinates in RoverLed.HEART_BEAT_GUIDE:
+                self.sense.set_pixel(coordinates[0], coordinates[1], beat[0], beat[1], beat[2])
+                time.sleep(beat[3])
+
+    def mark_ultrasonic(self):
+        colors = {'left': RoverLed.GREEN, 'lower': RoverLed.GREEN, 'front': RoverLed.GREEN, 'right': RoverLed.GREEN}
+        ultrasonic = self.rs.get_ultrasonic()
+        for pos in ['left', 'front', 'right']:
+            if ultrasonic[pos] <= settings.controller.safe_distance:
+                colors[pos] = RoverLed.RED
+            elif ultrasonic['pos'] <= settings.ultra.max:
+                colors['pos'] = RoverLed.BLUE
+        if ultrasonic['lower_deviation'] <= -settings.controller.safe_incline or \
+                        ultrasonic['lower_deviation'] >= settings.controller.safe_incline:
+            colors['lower'] = RoverLed.RED
+        for k in RoverLed.ULTRASONIC_GUIDE:
+            for coordinates in RoverLed.ULTRASONIC_GUIDE[k]:
+                self.led_matrix[coordinates[0]][coordinates[1]] = colors[k]
+
     def mark_base_direction(self, sense):
         map_dev = 10
-        self.reset_matrix()
         if sense['direction_deviation'] < 0:
             self.led_matrix[0][3] = RoverLed.RED
             self.led_matrix[0][4] = RoverLed.RED
@@ -101,7 +146,6 @@ class RoverLed:
                 for coordinates in RoverLed.DEVIATION_GUIDE[k]:
                     self.led_matrix[coordinates[0]][coordinates[1]] = RoverLed.WHITE
                 break
-        self.draw_matrix()
 
     def test_matrix(self):
         self.sense.set_rotation(90)

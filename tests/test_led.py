@@ -144,6 +144,32 @@ class TestLed(TestCase):
         })
         self.delay()
 
+    def test_ultrasonic(self):
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 0.0,
+            'front': 0.0,
+            'right': 0.0,
+            'lower_deviation': -100.0
+        })
+        self.delay()
+        self.rs.update_ultrasonic({
+            'left': 650.0,
+            'lower': 20.0,
+            'front': 650.0,
+            'right': 650.0,
+            'lower_deviation': 0.0
+        })
+        self.delay()
+        self.rs.update_ultrasonic({
+            'left': 650.0,
+            'lower': -550.0,
+            'front': 650.0,
+            'right': 650.0,
+            'lower_deviation': 55.0
+        })
+        self.delay()
+
     def test_unknown_command(self):
         self.rs.push_led('set_your_face', None)
         self.delay()

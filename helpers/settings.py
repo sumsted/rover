@@ -29,6 +29,7 @@ class led:
 
 
 class ultra:
+    max = 600
     test = False
     delay = .5
     address = '/dev/serial1'
