@@ -144,31 +144,66 @@ class TestLed(TestCase):
         })
         self.delay()
 
-    def test_ultrasonic(self):
-        self.rs.update_ultrasonic({
-            'left': 0.0,
-            'lower': 0.0,
-            'front': 0.0,
-            'right': 0.0,
-            'lower_deviation': -100.0
-        })
-        self.delay()
+    def test_ultrasonic_good(self):
         self.rs.update_ultrasonic({
             'left': 650.0,
-            'lower': 20.0,
+            'lower': 60.0,
             'front': 650.0,
             'right': 650.0,
-            'lower_deviation': 0.0
+            'lower_deviation': -10.0
         })
         self.delay()
+
+    def test_ultrasonic_proximity_forward(self):
         self.rs.update_ultrasonic({
             'left': 650.0,
-            'lower': -550.0,
-            'front': 650.0,
+            'lower': 60.0,
+            'front': 5.0,
             'right': 650.0,
-            'lower_deviation': 55.0
+            'lower_deviation': -10.0
         })
         self.delay()
+
+    def test_ultrasonic_proximity_left_right(self):
+        self.rs.update_ultrasonic({
+            'left': 5.0,
+            'lower': 60.0,
+            'front': 650.0,
+            'right': 5.0,
+            'lower_deviation': -10.0
+        })
+        self.delay()
+
+    def test_ultrasonic_proximity_lower1(self):
+        self.rs.update_ultrasonic({
+            'left': 650.0,
+            'lower': -120.0,
+            'front': 650.0,
+            'right': 650.0,
+            'lower_deviation': -70.0
+        })
+        self.delay()
+
+    def test_ultrasonic_proximity_lower2(self):
+        self.rs.update_ultrasonic({
+            'left': 650.0,
+            'lower': 70.0,
+            'front': 650.0,
+            'right': 650.0,
+            'lower_deviation': 70.0
+        })
+        self.delay()
+
+        def test_ultrasonic_map(self):gi
+            self.rs.update_ultrasonic({
+                'left': 400.0,
+                'lower': -10.0,
+                'front': 400.0,
+                'right': 400.0,
+                'lower_deviation': -10.0
+            })
+            self.delay()
+
 
     def test_unknown_command(self):
         self.rs.push_led('set_your_face', None)
