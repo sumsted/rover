@@ -125,8 +125,8 @@ class RoverLed:
         for pos in ['left', 'front', 'right']:
             if ultrasonic[pos] <= settings.controller.safe_distance:
                 colors[pos] = RoverLed.RED
-            elif ultrasonic['pos'] <= settings.ultra.max:
-                colors['pos'] = RoverLed.BLUE
+            elif ultrasonic[pos] <= settings.ultra.max:
+                colors[pos] = RoverLed.BLUE
         if ultrasonic['lower_deviation'] <= -settings.controller.safe_incline or \
                         ultrasonic['lower_deviation'] >= settings.controller.safe_incline:
             colors['lower'] = RoverLed.RED
