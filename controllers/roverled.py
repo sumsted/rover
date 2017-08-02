@@ -55,13 +55,13 @@ class RoverLed:
 
     HEART_BEAT = [
         [255, 255, 255, .1],
-        [0, 100, 0, .1],
-        [0, 200, 0, .1],
-        [0, 255, 0, .1],
-        [0, 200, 0, .1],
-        [0, 100, 0, .1],
-        [0, 200, 0, .1],
-        [0, 255, 0, .1],
+        [0, 0, 100, .1],
+        [0, 0, 200, .1],
+        [0, 0, 255, .1],
+        [0, 0, 200, .1],
+        [0, 0, 100, .1],
+        [0, 0, 200, .1],
+        [0, 0, 255, .1],
         [255, 255, 255, .1],
     ]
 
@@ -113,7 +113,7 @@ class RoverLed:
         self.sense.set_pixels(pixels)
 
     def heart_beat(self):
-        self.beat_index = self.beat_index+1 % 4
+        self.beat_index = self.beat_index + 1 % 4
         for beat in RoverLed.HEART_BEAT:
             for coordinates in RoverLed.HEART_BEAT_GUIDE:
                 self.sense.set_pixel(coordinates[0], coordinates[1], beat[0], beat[1], beat[2])
