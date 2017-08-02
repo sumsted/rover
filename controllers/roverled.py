@@ -75,6 +75,7 @@ class RoverLed:
         self.led_matrix = [[RoverLed.BLACK for x in range(8)] for y in range(8)]
         self.sense.set_rotation(90)
         self.rs.push_status('led: initialization complete')
+        self.beat_index = 0
 
     def start(self):
         self.rs.push_status('led: begin control loop')
@@ -112,10 +113,11 @@ class RoverLed:
         self.sense.set_pixels(pixels)
 
     def heart_beat(self):
+        self.beat_index = self.beat_index+1 % 4
         for beat in RoverLed.HEART_BEAT:
             for coordinates in RoverLed.HEART_BEAT_GUIDE:
                 self.sense.set_pixel(coordinates[0], coordinates[1], beat[0], beat[1], beat[2])
-                time.sleep(beat[3])
+            time.sleep(beat[3])
 
     def mark_ultrasonic(self):
         colors = {'left': RoverLed.GREEN, 'lower': RoverLed.GREEN, 'front': RoverLed.GREEN, 'right': RoverLed.GREEN}
