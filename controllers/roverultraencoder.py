@@ -65,7 +65,7 @@ class RoverUltraEncoder:
                 if command['command'] == 'set_base':
                     self.set_encoder_base()
                     self.rs.push_status('encoders: base set')
-                if command['command'] == 'end':
+                elif command['command'] == 'end':
                     self.rs.push_status('ultra: end command received')
                     break
                 else:
