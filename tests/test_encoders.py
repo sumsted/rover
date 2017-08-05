@@ -88,11 +88,11 @@ class TestEncoders(TestCase):
             'distance': 0
         })
         self.rs.push_encoders('set_base', None)
-        self.assert_status('encoders: base set', 'encoder base status not found')
+        self.assert_status('ultraencoder: base set', 'encoder base status not found')
         e = self.rs.get_encoders()
         self.assertEqual(e['ticks'], e['ticks_base'], 'encoder ticks base not set')
 
     def test_unknown_command(self):
         self.rs.push_encoders('set_your_face', None)
         self.delay()
-        self.assert_status('encoders: unknown command', 'encoder unknown command status not found')
+        self.assert_status('ultraencoder: unknown command', 'encoder unknown command status not found')

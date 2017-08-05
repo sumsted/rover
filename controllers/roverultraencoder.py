@@ -39,10 +39,10 @@ class RoverUltraEncoder:
             'distance': 0
         }
         self.rs = RoverShare()
-        self.rs.push_status('ultra: initialization complete')
+        self.rs.push_status('ultraencoder: initialization complete')
 
     def start(self):
-        self.rs.push_status('ultra: begin control loop')
+        self.rs.push_status('ultraencoder: begin control loop')
         while True:
             # always update sensor data
             # ultrasonic and encoder data read
@@ -64,15 +64,15 @@ class RoverUltraEncoder:
             if command is not None:
                 if command['command'] == 'set_base':
                     self.set_encoder_base()
-                    self.rs.push_status('encoders: base set')
+                    self.rs.push_status('ultraencoder: base set')
                 elif command['command'] == 'end':
-                    self.rs.push_status('ultra: end command received')
+                    self.rs.push_status('ultraencoder: end command received')
                     break
                 else:
-                    self.rs.push_status('ultra: unknown command: %s' % command['command'])
+                    self.rs.push_status('ultraencoder: unknown command: %s' % command['command'])
             # delay to slow things down
             time.sleep(settings.ultra.delay)
-        self.rs.push_status('ultra: end ultra, good bye')
+        self.rs.push_status('ultraencoder: end ultra, good bye')
 
     def get_ultra(self, key):
         # todo call serial to nano and also check test

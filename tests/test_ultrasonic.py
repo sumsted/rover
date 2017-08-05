@@ -83,4 +83,4 @@ class TestUltrasonic(TestCase):
     def test_unknown_command(self):
         self.rs.push_ultrasonic('set_your_face', None)
         self.delay()
-        self.assert_status('ultra: unknown command', 'encoder unknown command status not found')
+        self.assert_status('ultraencoder: unknown command', 'encoder unknown command status not found')
