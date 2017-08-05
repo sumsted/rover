@@ -11,7 +11,7 @@ class encoders:
     delay = .5
     circumference_cm = 20
     rotation_ticks = 5
-    address = '/dev/serial1'
+    address = '/dev/ttyUSB0'
 
 
 class map:
@@ -32,7 +32,8 @@ class ultra:
     max = 600
     test = False
     delay = .5
-    address = '/dev/serial1'
+    address = '/dev/ttyUSB0'
+    mock_serial = True
 
 
 class motor:

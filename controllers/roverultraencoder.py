@@ -12,9 +12,18 @@ record a deviation for 0 where the difference indicates a drop or rise above whe
 import os
 import time
 import sys
+
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
+
+if not settings.ultra.mock_serial:
+    import serial
+else:
+    from mock import serial
+
+import time
+import json
 
 
 class RoverUltraEncoder:
@@ -41,6 +50,7 @@ class RoverUltraEncoder:
             'distance': 0
         }
         self.rs = RoverShare()
+        self.nano = serial.Serial(settings.ultra.address, 9600, timeout=.2)
         self.rs.push_status('ultraencoder: initialization complete')
 
     def start(self):
@@ -95,10 +105,26 @@ class RoverUltraEncoder:
 
     def get_encoder(self):
         # todo send command to serial post response
-        a = settings.encoders.address
-        return 0
+        result = None
+        encoders = None
+        try:
+            self.nano.write('u50!')
+            result = self.nano.readLine()
+            encoders = json.loads(result.decode("utf-8"))
+            return encoders['left']
+        except Exception as e:
+            self.rs.push_status('ultraencoder: EXCEPTION: reading encoder: result: %s, %s' % (str(result), str(e)))
+            return 0
 
+    def clear_serial_buffer(self):
+        self.nano.readLine()
+        self.nano.readLine()
+        self.nano.readLine()
+        self.nano.readLine()
+        self.nano.write('x!'.encode())
+        self.nano.write('x!'.encode())
 
 if __name__ == '__main__':
     rc = RoverUltraEncoder()
     rc.start()
+
