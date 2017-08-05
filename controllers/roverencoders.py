@@ -57,4 +57,5 @@ class RoverEncoders:
 
 if __name__ == '__main__':
     rc = RoverEncoders()
-    rc.start()
+    rc.rs.push_status('encoders: end encoders - merged into ultraencoder')
+    # rc.start()
