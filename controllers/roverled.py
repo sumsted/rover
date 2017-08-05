@@ -100,7 +100,7 @@ class RoverLed:
                     self.draw_matrix()
                     self.heart_beat()
             except Exception as e:
-            self.rs.push_status('led: EXCEPTION: command: %s, %s' % (str(command), str(e)))
+                self.rs.push_status('led: EXCEPTION: command: %s, %s' % (str(command), str(e)))
             # adding delay
             time.sleep(settings.led.delay)
         self.rs.push_status('led: end led, good bye')
