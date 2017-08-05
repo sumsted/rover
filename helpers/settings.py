@@ -19,7 +19,7 @@ class map:
 
 
 class sense:
-    test = True
+    test = False
     delay = .5
 
 
