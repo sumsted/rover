@@ -123,9 +123,10 @@ class RoverLed:
             time.sleep(beat[3])
 
     def mark_ultrasonic(self):
-        colors = {'left': RoverLed.GREEN, 'lower': RoverLed.GREEN, 'front': RoverLed.GREEN, 'right': RoverLed.GREEN}
+        colors = {'left': RoverLed.GREEN, 'lower': RoverLed.GREEN, 'front': RoverLed.GREEN, 'right': RoverLed.GREEN,
+                  'rear': RoverLed.GREEN}
         ultrasonic = self.rs.get_ultrasonic()
-        for pos in ['left', 'front', 'right']:
+        for pos in ['left', 'front', 'right', 'rear']:
             if ultrasonic[pos] <= settings.controller.safe_distance:
                 colors[pos] = RoverLed.RED
             elif ultrasonic[pos] <= settings.ultra.max:
