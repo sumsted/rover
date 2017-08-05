@@ -61,15 +61,18 @@ class RoverUltraEncoder:
 
             # process any commands received, should be few
             command = self.rs.pop_ultrasonic()
-            if command is not None:
-                if command['command'] == 'set_base':
-                    self.set_encoder_base()
-                    self.rs.push_status('ultraencoder: base set')
-                elif command['command'] == 'end':
-                    self.rs.push_status('ultraencoder: end command received')
-                    break
-                else:
-                    self.rs.push_status('ultraencoder: unknown command: %s' % command['command'])
+            try:
+                if command is not None:
+                    if command['command'] == 'set_base':
+                        self.set_encoder_base()
+                        self.rs.push_status('ultraencoder: base set')
+                    elif command['command'] == 'end':
+                        self.rs.push_status('ultraencoder: end command received')
+                        break
+                    else:
+                        self.rs.push_status('ultraencoder: unknown command: %s' % command['command'])
+            except Exception as e:
+                self.rs.push_status('ultraencoder: EXCEPTION: command: %s, %s' % (str(command), str(e)))
             # delay to slow things down
             time.sleep(settings.ultra.delay)
         self.rs.push_status('ultraencoder: end ultra, good bye')

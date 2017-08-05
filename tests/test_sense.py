@@ -91,6 +91,6 @@ class TestSense(TestCase):
         self.assert_status('sense: set_correction', 'sense set correction status not found')
 
     def test_unknown_command(self):
-        self.rs.push_led('set_your_face', None)
+        self.rs.push_sense('set_your_face', None)
         self.delay()
-        self.assert_status('led: unknown command', 'sense unknown command status not found')
+        self.assert_status('sense: unknown command', 'sense unknown command status not found')

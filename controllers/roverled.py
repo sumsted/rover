@@ -84,21 +84,23 @@ class RoverLed:
 
             # process any commands received, should be few
             command = self.rs.pop_led()
-            if command is not None:
-                if command['command'] == 'diagnostic':
-                    self.rs.push_status('led: diagnostics')
-                elif command['command'] == 'end':
-                    self.rs.push_status('led: end command received')
-                    break
+            try:
+                if command is not None:
+                    if command['command'] == 'diagnostic':
+                        self.rs.push_status('led: diagnostics')
+                    elif command['command'] == 'end':
+                        self.rs.push_status('led: end command received')
+                        break
+                    else:
+                        self.rs.push_status('led: unknown command: %s' % command['command'])
                 else:
-                    self.rs.push_status('led: unknown command: %s' % command['command'])
-            else:
-                self.reset_matrix()
-                self.mark_ultrasonic()
-                self.mark_base_direction(sense)
-                self.draw_matrix()
-                self.heart_beat()
-
+                    self.reset_matrix()
+                    self.mark_ultrasonic()
+                    self.mark_base_direction(sense)
+                    self.draw_matrix()
+                    self.heart_beat()
+            except Exception as e:
+            self.rs.push_status('led: EXCEPTION: command: %s, %s' % (str(command), str(e)))
             # adding delay
             time.sleep(settings.led.delay)
         self.rs.push_status('led: end led, good bye')

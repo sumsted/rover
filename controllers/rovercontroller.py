@@ -59,103 +59,105 @@ class RoverController:
         while True:
 
             new_command = self.rs.pop_command()
-            if new_command is not None:
-                command = new_command
-                self.rs.push_sense('set_base', 0)
-                self.rs.push_encoders('set_base', 0)
-                motor.stop()
-
-            if command['command'] == 'stop':
-                motor.stop()
-                self.rs.push_status('controller: stop')
-                command = RoverController.null_command
-
-            elif command['command'] == 'forward':
+            try:
                 if new_command is not None:
-                    self.rs.push_sense('set_heading', command['heading'])
-                    self.rs.push_status('controller: forward, speed: %f, heading: %f, distance: %f' % (
-                        command['speed'], command['heading'], command['distance']))
-
-                # pid
-                sense = self.rs.get_sense()  # has direction
-                direction_change = self.pid.get_correction(sense['direction_deviation'])
-
-                # check distance from obstructions, both straight ahead and drop
-                ultrasonic = self.rs.get_ultrasonic()
-                if ultrasonic['front'] <= settings.controller.safe_distance or \
-                                ultrasonic['lower_deviation'] <= -settings.controller.safe_incline or \
-                                ultrasonic['lower_deviation'] >= settings.controller.safe_incline:
+                    command = new_command
+                    self.rs.push_sense('set_base', 0)
+                    self.rs.push_encoders('set_base', 0)
                     motor.stop()
-                    command['command'] = 'stop'
-                    self.rs.push_status(
-                        'controller: proximity warning, all stop, front: %f, lower_deviation: %f, lower: %f' % (
-                            ultrasonic['front'], ultrasonic['lower_deviation'], ultrasonic['lower']))
-                else:
-                    # check distance and move
-                    encoders = self.rs.get_encoders()
-                    if encoders['distance'] >= command['distance']:
+
+                if command['command'] == 'stop':
+                    motor.stop()
+                    self.rs.push_status('controller: stop')
+                    command = RoverController.null_command
+
+                elif command['command'] == 'forward':
+                    if new_command is not None:
+                        self.rs.push_sense('set_heading', command['heading'])
+                        self.rs.push_status('controller: forward, speed: %f, heading: %f, distance: %f' % (
+                            command['speed'], command['heading'], command['distance']))
+
+                    # pid
+                    sense = self.rs.get_sense()  # has direction
+                    direction_change = self.pid.get_correction(sense['direction_deviation'])
+
+                    # check distance from obstructions, both straight ahead and drop
+                    ultrasonic = self.rs.get_ultrasonic()
+                    if ultrasonic['front'] <= settings.controller.safe_distance or \
+                                    ultrasonic['lower_deviation'] <= -settings.controller.safe_incline or \
+                                    ultrasonic['lower_deviation'] >= settings.controller.safe_incline:
                         motor.stop()
                         command['command'] = 'stop'
-                        self.rs.push_status('controller: forward distance reached, distance: %f, encoder: %f' % (
-                            command['distance'], encoders['distance']))
+                        self.rs.push_status(
+                            'controller: proximity warning, all stop, front: %f, lower_deviation: %f, lower: %f' % (
+                                ultrasonic['front'], ultrasonic['lower_deviation'], ultrasonic['lower']))
                     else:
-                        if encoders['distance'] % 20 == 0:
-                            self.rs.push_status('controller: forward distance travelled: %d' % encoders['distance'])
-                        motor.move(command['speed'] + (direction_change / 2),
-                                   command['speed'] + (-1 * (direction_change / 2)))
+                        # check distance and move
+                        encoders = self.rs.get_encoders()
+                        if encoders['distance'] >= command['distance']:
+                            motor.stop()
+                            command['command'] = 'stop'
+                            self.rs.push_status('controller: forward distance reached, distance: %f, encoder: %f' % (
+                                command['distance'], encoders['distance']))
+                        else:
+                            if encoders['distance'] % 20 == 0:
+                                self.rs.push_status('controller: forward distance travelled: %d' % encoders['distance'])
+                            motor.move(command['speed'] + (direction_change / 2),
+                                       command['speed'] + (-1 * (direction_change / 2)))
 
-            elif command['command'] == 'rotate':
-                # set new direction
-                if new_command is not None:
-                    angle = command['angle'] if 'angle' in command else None
-                    heading = command['heading'] if 'heading' in command else None
+                elif command['command'] == 'rotate':
+                    # set new direction
+                    if new_command is not None:
+                        angle = command['angle'] if 'angle' in command else None
+                        heading = command['heading'] if 'heading' in command else None
 
-                    if angle is None and heading is not None:
-                        self.rs.push_sense('set_heading', heading)
+                        if angle is None and heading is not None:
+                            self.rs.push_sense('set_heading', heading)
+                        else:
+                            self.rs.push_sense('set_correction', correction=angle)
+                        self.rs.push_status('controller: rotate, speed: %f, angle: %f, heading: %f' % (
+                            command['speed'], command['angle'] or 500, command['heading'] or 500))
+
+                    # get deviation from sense and adjust
+                    sense = self.rs.get_sense()
+                    if RoverController.approx(sense['direction_deviation'], sense['direction_base'],
+                                              settings.controller.direction_deviation_range):
+                        motor.stop()
+                        command['command'] = 'stop'
+                        self.rs.push_status(
+                            'controller: rotation reached, direction: %f, direction_deviation: %f, direction_base: %f' % (
+                                sense['direction'], sense['direction_deviation'], sense['direction_base']))
                     else:
-                        self.rs.push_sense('set_correction', angle)
-                    self.rs.push_status('controller: rotate, speed: %f, angle: %f, heading: %f' % (
-                        command['speed'], command['angle'] or 500, command['heading'] or 500))
+                        sign = -1 if sense['direction_deviation'] > 0 else 1
+                        motor.move(sign * command['speed'] / 2, (sign * -1) * command['speed'] / 2)
 
-                # get deviation from sense and adjust
-                sense = self.rs.get_sense()
-                if RoverController.approx(sense['direction_deviation'], sense['direction_base'],
-                                          settings.controller.direction_deviation_range):
+                elif command['command'] == 'direct':
+                    # todo with joystick or other command input
+                    pass
+
+                elif command['command'] == 'diagnostic':
+                    # todo diagnostic requerst perhaps from sensehat
+                    pass
+
+                elif command['command'] == 'end':
                     motor.stop()
-                    command['command'] = 'stop'
-                    self.rs.push_status(
-                        'controller: rotation reached, direction: %f, direction_deviation: %f, direction_base: %f' % (
-                            sense['direction'], sense['direction_deviation'], sense['direction_base']))
+                    self.rs.push_status('controller: end command received, ending all controllers')
+                    self.rs.push_sense('end', None)
+                    self.rs.push_encoders('end', None)
+                    self.rs.push_led('end', None)
+                    self.rs.push_ultrasonic('end', None)
+                    self.rs.push_status('controller: sent end command')
+                    break
+
+                elif command['command'] == 'null':
+                    pass
+
                 else:
-                    sign = -1 if sense['direction_deviation'] > 0 else 1
-                    motor.move(sign * command['speed'] / 2, (sign * -1) * command['speed'] / 2)
-
-            elif command['command'] == 'direct':
-                # todo with joystick or other command input
-                pass
-
-            elif command['command'] == 'diagnostic':
-                # todo diagnostic requerst perhaps from sensehat
-                pass
-
-            elif command['command'] == 'end':
-                motor.stop()
-                self.rs.push_status('controller: end command received, ending all controllers')
-                self.rs.push_sense('end', None)
-                self.rs.push_encoders('end', None)
-                self.rs.push_led('end', None)
-                self.rs.push_ultrasonic('end', None)
-                self.rs.push_status('controller: sent end command')
-                break
-
-            elif command['command'] == 'null':
-                pass
-
-            else:
-                if new_command is not None:
-                    motor.stop()
-                    self.rs.push_status('controller: unknown command: %s' % command['command'])
-
+                    if new_command is not None:
+                        motor.stop()
+                        self.rs.push_status('controller: unknown command: %s' % command['command'])
+            except Exception as e:
+                self.rs.push_status('controller: EXCEPTION: new_command: %s, command: %s, %s' % (str(new_command), str(command), str(e)))
             # slow things down a bit
             time.sleep(settings.controller.delay)
 

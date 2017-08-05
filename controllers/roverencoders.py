@@ -33,15 +33,18 @@ class RoverEncoders:
 
             # process any commands received, should be few
             command = self.rs.pop_encoders()
-            if command is not None:
-                if command['command'] == 'set_base':
-                    self.set_base()
-                    self.rs.push_status('encoders: base set')
-                elif command['command'] == 'end':
-                    self.rs.push_status('encoders: end command received')
-                    break
-                else:
-                    self.rs.push_status('encoders: unknown command: %s' % command['command'])
+            try:
+                if command is not None:
+                    if command['command'] == 'set_base':
+                        self.set_base()
+                        self.rs.push_status('encoders: base set')
+                    elif command['command'] == 'end':
+                        self.rs.push_status('encoders: end command received')
+                        break
+                    else:
+                        self.rs.push_status('encoders: unknown command: %s' % command['command'])
+            except Exception as e:
+            self.rs.push_status('encoders: EXCEPTION: command: %s, %s' % (str(command), str(e)))
             # slow it down
             time.sleep(settings.encoders.delay)
         self.rs.push_status('encoders: end encoders, good bye')

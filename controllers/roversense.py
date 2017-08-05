@@ -2,6 +2,7 @@ import math
 import os
 import time
 import sys
+
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
@@ -65,18 +66,21 @@ class RoverSense:
 
             # process any commands received, should be few
             command = self.rs.pop_sense()
-            if command is not None:
-                if command['command'] == 'set_heading':
-                    self.state['direction_base'] = command['heading']
-                    self.rs.push_status('sense: set_heading: %f' % command['heading'])
-                elif command['command'] == 'set_correction':
-                    self.state['direction_base'] += command['correction']
-                    self.rs.push_status('sense: set_correction: %f' % command['correction'])
-                elif command['command'] == 'end':
-                    self.rs.push_status('sense: end command received')
-                    break
-                else:
-                    self.rs.push_status('sense: unknown command: %s' % command['command'])
+            try:
+                if command is not None:
+                    if command['command'] == 'set_heading':
+                        self.state['direction_base'] = command['heading']
+                        self.rs.push_status('sense: set_heading: %f' % command['heading'])
+                    elif command['command'] == 'set_correction':
+                        self.state['direction_base'] += command['correction']
+                        self.rs.push_status('sense: set_correction: %f' % command['correction'])
+                    elif command['command'] == 'end':
+                        self.rs.push_status('sense: end command received')
+                        break
+                    else:
+                        self.rs.push_status('sense: unknown command: %s' % command['command'])
+            except Exception as e:
+                self.rs.push_status('sense: EXCEPTION: command: %s, %s' % (str(command), str(e)))
             # slow things down
             time.sleep(settings.sense.delay)
         self.rs.push_status('sense: end sense, good bye')
