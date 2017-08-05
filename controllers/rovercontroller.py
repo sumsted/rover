@@ -72,6 +72,7 @@ class RoverController:
                     command = RoverController.null_command
 
                 elif command['command'] == 'forward':
+                    # todo need reverse command and need to look at rear ultra for proximity
                     if new_command is not None:
                         self.rs.push_sense('set_heading', command['heading'])
                         self.rs.push_status('controller: forward, speed: %f, heading: %f, distance: %f' % (

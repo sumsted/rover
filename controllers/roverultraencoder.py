@@ -22,6 +22,7 @@ class RoverUltraEncoder:
     LOWER = 1
     FRONT = 2
     RIGHT = 3
+    REAR = 4
     LOWER_BASE = 20
 
     def __init__(self):
@@ -30,6 +31,7 @@ class RoverUltraEncoder:
             'lower': 0.0,
             'front': 0.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         }
         self.encoder_state = {
@@ -50,6 +52,7 @@ class RoverUltraEncoder:
             self.ultra_state['lower'] = self.get_ultra(RoverUltraEncoder.LOWER)
             self.ultra_state['front'] = self.get_ultra(RoverUltraEncoder.FRONT)
             self.ultra_state['right'] = self.get_ultra(RoverUltraEncoder.RIGHT)
+            self.ultra_state['rear'] = self.get_ultra(RoverUltraEncoder.REAR)
             self.ultra_state['lower_deviation'] = RoverUltraEncoder.LOWER_BASE - self.ultra_state['lower']
             self.rs.update_ultrasonic(self.ultra_state)
 

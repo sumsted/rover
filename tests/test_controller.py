@@ -51,6 +51,7 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 0.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
         self.rs.update_encoders({
@@ -87,6 +88,7 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
 
@@ -104,6 +106,7 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
 
@@ -117,6 +120,38 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 10.0,
             'right': 0.0,
+            'rear': 0.0,
+            'lower_deviation': 0.0
+        })
+        self.delay()
+        self.assert_n_status('controller: proximity warning', 'controller proximity warning status not found')
+
+        self.rs.push_command('stop')
+        self.delay()
+        self.assert_status('controller: stop', 'controller stop status not found')
+
+    # todo use test case once reverse setup in controller
+    def _rear_proximity(self):
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 0.0,
+            'front': 100.0,
+            'right': 0.0,
+            'rear': 0.0,
+            'lower_deviation': 0.0
+        })
+
+        self.rs.push_command('forward', -30, 20, 50)
+        self.delay()
+        self.assert_status('controller: forward', 'controller forward status not found')
+
+        self.rs.clear_status()
+        self.rs.update_ultrasonic({
+            'left': 0.0,
+            'lower': 0.0,
+            'front': 100.0,
+            'right': 10.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
         self.delay()
@@ -132,6 +167,7 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
 
@@ -145,6 +181,7 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 51.0
         })
         self.delay()
@@ -160,6 +197,7 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
 
@@ -173,6 +211,7 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': -51.0
         })
         self.delay()
@@ -188,6 +227,7 @@ class TestController(TestCase):
             'lower': 0.0,
             'front': 100.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
 

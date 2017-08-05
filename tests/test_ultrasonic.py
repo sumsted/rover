@@ -50,6 +50,7 @@ class TestUltrasonic(TestCase):
             'lower': 0.0,
             'front': 0.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
         self.rs.update_encoders({

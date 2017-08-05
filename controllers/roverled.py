@@ -48,9 +48,10 @@ class RoverLed:
 
     ULTRASONIC_GUIDE = {
         'left': [[3, 2], [4, 2]],
-        'lower': [[2, 3]],
-        'front': [[2, 4]],
-        'right': [[3, 5], [4, 5]]
+        'lower': [[1, 3], [1, 4]],
+        'front': [[2, 3], [2, 4]],
+        'right': [[3, 5], [4, 5]],
+        'rear': [[5, 3], [5, 4]],
     }
 
     HEART_BEAT = [
