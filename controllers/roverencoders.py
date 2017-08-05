@@ -44,7 +44,7 @@ class RoverEncoders:
                     else:
                         self.rs.push_status('encoders: unknown command: %s' % command['command'])
             except Exception as e:
-            self.rs.push_status('encoders: EXCEPTION: command: %s, %s' % (str(command), str(e)))
+                self.rs.push_status('encoders: EXCEPTION: command: %s, %s' % (str(command), str(e)))
             # slow it down
             time.sleep(settings.encoders.delay)
         self.rs.push_status('encoders: end encoders, good bye')

@@ -53,6 +53,7 @@ class RoverSense:
             'direction_base': 0.0,
             'direction_deviation': 0.0
         }
+        self.set_base()
         self.rs.push_status('sense: initialization complete')
 
     def start(self):
@@ -74,6 +75,10 @@ class RoverSense:
                     elif command['command'] == 'set_correction':
                         self.state['direction_base'] += command['correction']
                         self.rs.push_status('sense: set_correction: %f' % command['correction'])
+                    elif command['command'] == 'set_base':
+                        self.set_base()
+                        self.rs.push_status('sense: set_base')
+                        break
                     elif command['command'] == 'end':
                         self.rs.push_status('sense: end command received')
                         break
