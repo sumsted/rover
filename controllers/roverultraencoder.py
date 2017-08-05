@@ -17,7 +17,7 @@ from helpers import settings
 from helpers.rovershare import RoverShare
 
 
-class RoverUltra:
+class RoverUltraEncoder:
     LEFT = 0
     LOWER = 1
     FRONT = 2
@@ -25,12 +25,18 @@ class RoverUltra:
     LOWER_BASE = 20
 
     def __init__(self):
-        self.state = {
+        self.ultra_state = {
             'left': 0.0,
             'lower': 0.0,
             'front': 0.0,
             'right': 0.0,
             'lower_deviation': 0.0
+        }
+        self.encoder_state = {
+            'ticks': 0,
+            'ticks_base': 0,
+            'ticks_delta': 0,
+            'distance': 0
         }
         self.rs = RoverShare()
         self.rs.push_status('ultra: initialization complete')
@@ -39,16 +45,26 @@ class RoverUltra:
         self.rs.push_status('ultra: begin control loop')
         while True:
             # always update sensor data
-            self.state['left'] = self.get_encoder(RoverUltra.LEFT)
-            self.state['lower'] = self.get_encoder(RoverUltra.LOWER)
-            self.state['front'] = self.get_encoder(RoverUltra.FRONT)
-            self.state['right'] = self.get_encoder(RoverUltra.RIGHT)
-            self.state['lower_deviation'] = RoverUltra.LOWER_BASE - self.state['lower']
-            self.rs.update_ultrasonic(self.state)
+            # ultrasonic and encoder data read
+            self.ultra_state['left'] = self.get_ultra(RoverUltraEncoder.LEFT)
+            self.ultra_state['lower'] = self.get_ultra(RoverUltraEncoder.LOWER)
+            self.ultra_state['front'] = self.get_ultra(RoverUltraEncoder.FRONT)
+            self.ultra_state['right'] = self.get_ultra(RoverUltraEncoder.RIGHT)
+            self.ultra_state['lower_deviation'] = RoverUltraEncoder.LOWER_BASE - self.ultra_state['lower']
+            self.rs.update_ultrasonic(self.ultra_state)
+
+            self.encoder_state['ticks'] = self.get_encoder()
+            self.encoder_state['ticks_delta'] = self.encoder_state['ticks'] - self.encoder_state['ticks_base']
+            self.encoder_state['distance'] = (self.encoder_state[
+                                          'ticks_delta'] / settings.encoders.rotation_ticks) * settings.encoders.circumference_cm
+            self.rs.update_encoders(self.encoder_state)
 
             # process any commands received, should be few
             command = self.rs.pop_ultrasonic()
             if command is not None:
+                if command['command'] == 'set_base':
+                    self.set_encoder_base()
+                    self.rs.push_status('encoders: base set')
                 if command['command'] == 'end':
                     self.rs.push_status('ultra: end command received')
                     break
@@ -58,7 +74,7 @@ class RoverUltra:
             time.sleep(settings.ultra.delay)
         self.rs.push_status('ultra: end ultra, good bye')
 
-    def get_encoder(self, key):
+    def get_ultra(self, key):
         # todo call serial to nano and also check test
         if not settings.ultra.test:
             a = settings.ultra.address
@@ -68,7 +84,15 @@ class RoverUltra:
             result = 0.0
         return result
 
+    def set_encoder_base(self):
+        self.encoder_state['ticks_base'] = self.encoder_state['ticks']
+
+    def get_encoder(self):
+        # todo send command to serial post response
+        a = settings.encoders.address
+        return 0
+
 
 if __name__ == '__main__':
-    rc = RoverUltra()
+    rc = RoverUltraEncoder()
     rc.start()

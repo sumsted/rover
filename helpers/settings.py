@@ -56,7 +56,7 @@ class share:
     sense_key = 'sense'
     sense_queue_key = 'sense_queue'
     encoders_key = 'encoders'
-    encoders_queue_key = 'encoders_queue'
+    encoders_queue_key = 'ultrasonic_queue'  # sharing controller as hosted on single nano
     status_list_key = 'status_list'
     ultrasonic_key = 'ultrasonic'
     led_queue_key = 'led_queue'

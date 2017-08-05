@@ -1,0 +1,79 @@
+body {
+    padding-top: 50px;
+    background-color: #ffffff;
+    color: #444444;
+    font-size: 20px;
+}
+
+.starter-template {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+.container {
+    margin-left: 15px;
+    margin-right: 15px;
+    width: auto;
+}
+
+.kiosk-logo {
+    text-align: center;
+}
+
+.kiosk-section {
+    margin-top: 70px;
+}
+
+.kiosk-menu {
+    width: 30%;
+    margin: 30px auto;
+    text-align: center;
+    font-size: 2em;
+
+}
+
+.kiosk-row_spacer {
+    margin-top: 20px;
+}
+
+a, a:visited {
+    color: #444444;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    color: #aaaaaa;
+    text-decoration: none;
+}
+
+.kiosk-value {
+    text-align: right;
+}
+
+.kiosk-heading {
+    font-size: 2em;
+    text-align: center;
+}
+
+.btn-primary {
+    color: #444444;
+    background-color: #ffffff;
+    font-size: 20px;
+    border-color: #333;
+    margin-bottom: 10px;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background: #ffffff;
+    color: #444444;
+}
+
+.btn-primary:active, .btn-primary.active, .btn-primary:active:focus {
+    background: #00569b !important;
+    color: #444444;
+    box-shadow: none;
+}
+
+.add-a-little-space {
+    margin-top: 30px;
+}

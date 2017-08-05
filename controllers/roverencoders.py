@@ -12,7 +12,7 @@ class RoverEncoders:
         self.distance = 0
         self.base_ticks = 0
         self.base_distance = 0
-        self.state = {
+        self.encoder_state = {
             'ticks': 0,
             'ticks_base': 0,
             'ticks_delta': 0,
@@ -25,11 +25,11 @@ class RoverEncoders:
         self.rs.push_status('encoders: begin control loop')
         while True:
             # always update sensor data
-            self.state['ticks'] = self.get_encoder()
-            self.state['ticks_delta'] = self.state['ticks'] - self.state['ticks_base']
-            self.state['distance'] = (self.state[
+            self.encoder_state['ticks'] = self.get_encoder()
+            self.encoder_state['ticks_delta'] = self.encoder_state['ticks'] - self.encoder_state['ticks_base']
+            self.encoder_state['distance'] = (self.encoder_state[
                                           'ticks_delta'] / settings.encoders.rotation_ticks) * settings.encoders.circumference_cm
-            self.rs.update_encoders(self.state)
+            self.rs.update_encoders(self.encoder_state)
 
             # process any commands received, should be few
             command = self.rs.pop_encoders()
@@ -47,7 +47,7 @@ class RoverEncoders:
         self.rs.push_status('encoders: end encoders, good bye')
 
     def set_base(self):
-        self.state['ticks_base'] = self.state['ticks']
+        self.encoder_state['ticks_base'] = self.encoder_state['ticks']
 
     def get_encoder(self):
         # todo send command to serial post response

@@ -1,0 +1,274 @@
+/*!
+ * Start Bootstrap - Landing Page Bootstrap Theme (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 700;
+}
+
+.topnav {
+    font-size: 14px; 
+}
+
+.lead {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.image-overlay{
+    background: rgba(0,0,0,0.3);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.intro-header {
+    padding-top: 50px; /* If you're making other pages, make sure there is 50px of padding to make sure the navbar doesn't overlap content! */
+    padding-bottom: 50px;
+    text-align: center;
+    color: #ffffff;
+    background: url(../img/background.png) no-repeat center center;
+    background-size: cover;
+    position: relative;
+}
+
+.intro-message {
+    position: relative;
+    padding-top: 18%;
+    padding-bottom: 20%;
+}
+
+.intro-message > h1 {
+    margin: 0;
+    text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+    font-size: 5em;
+}
+
+.intro-divider {
+    width: 400px;
+    border-top: 1px solid #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.intro-message > h3 {
+    text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+}
+
+.purple-spacer {
+    margin-top: 20px;
+}
+
+.btn-primary {
+  color: #ffffff;
+  background-color: #444;
+  font-size: 20px;
+  border-color: #333;
+  margin-bottom: 10px;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background: #444;
+    color: #DDDDDD;
+}
+
+.btn-primary:active, .btn-primary.active, .btn-primary:active:focus {
+    background: #444;
+    color: #AAAAAA;
+    box-shadow: none;
+}
+
+.logo-wrapper {
+    display:block;
+    margin-top: 14px;
+}
+
+.logo-image, .logo-copy {
+    position:relative;
+    float: left;
+}
+
+.alexa-instructions p {
+    text-align: center;
+    color: #777777;
+}
+
+.box-the-image {
+    box-shadow: 2px 2px 2px #999999;
+}
+
+.vendor-logo{
+    height: 100px;
+    width: 100px;
+}
+
+.center-this-guy {
+    width: 450px;
+    float: none;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.page-this-guy {
+    margin: 100px 0 300px;
+}
+
+.astro-step {
+    text-align: center;
+    margin:  -14px 0 4px 0;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+.astro-section-heading {
+    text-align: center;
+}
+
+.slack-brand {
+    font-size: 15pt;
+}
+
+.slack-logo {
+    height: 30px;
+}
+
+.tools-logo-wrapper {
+    height: 200px;
+}
+
+.logo-copy {
+    position:relative;
+    float: left;
+}
+
+.logo-copy {
+    margin-top: 2px;
+    margin-left: 10px;
+    color: #777777;
+    font-size: 1.1em;
+}
+@media(max-width:767px) {
+    .intro-message {
+        padding-bottom: 15%;
+    }
+
+    .intro-message > h1 {
+        font-size: 3em;
+    }
+
+    ul.intro-social-buttons > li {
+        display: block;
+        margin-bottom: 20px;
+        padding: 0;
+    }
+
+    ul.intro-social-buttons > li:last-child {
+        margin-bottom: 0;
+    }
+
+    .intro-divider {
+        width: 100%;
+    }
+}
+
+.network-name {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 2px;
+}
+
+.content-section-a {
+    padding: 50px 0;
+    background-color: #f8f8f8;
+}
+
+.content-section-b {
+    padding: 50px 0;
+    border-top: 1px solid #e7e7e7;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.section-heading {
+    margin-bottom: 30px;
+}
+
+.section-heading-spacer {
+    float: left;
+    width: 200px;
+    border-top: 3px solid #e7e7e7;
+}
+
+.banner {
+    padding: 100px 0;
+    color: #f8f8f8;
+    background: url(../img/fedexservices.png) no-repeat center center;
+    background-size: cover;
+    position: relative;
+}
+
+.banner h2 {
+    margin: 0;
+    text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+    font-size: 3em;
+}
+
+.banner ul {
+    margin-bottom: 0;
+}
+
+.banner-social-buttons {
+    float: right;
+    margin-top: 0;
+}
+
+@media(max-width:1199px) {
+    ul.banner-social-buttons {
+        float: left;
+        margin-top: 25px;
+    }
+}
+
+@media(max-width:767px) {
+    .banner h2 {
+        margin: 0;
+        text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
+        font-size: 3em;
+    }
+
+    ul.banner-social-buttons > li {
+        display: block;
+        margin-bottom: 20px;
+        padding: 0;
+    }
+
+    ul.banner-social-buttons > li:last-child {
+        margin-bottom: 0;
+    }
+}
+
+footer {
+    padding: 50px 0;
+    background-color: #f8f8f8;
+}
+
+p.copyright {
+    margin: 15px 0 0;
+}
