@@ -32,6 +32,7 @@ def gps_pvt_callback(pvt, record_number, total_points_to_get, tp):
 class RoverGps:
     def __init__(self):
         self.gps_state = {
+            'mock': settings.gps.mock_gps,
             'lat': 0.0,
             'lon': 0.0,
             'three_words': 'a.b.c',

@@ -49,7 +49,7 @@ class gps:
     key = get_environ('WHAT_THREE_WORDS_KEY')
     address = '/dev/ttyUSB0'
     delay = .5
-    mock_gps = True
+    mock_gps = False
     what_three_words_on = True
 
 
