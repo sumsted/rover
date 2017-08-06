@@ -16,7 +16,7 @@ class controller:
 
 
 class encoders:
-    test = False
+    test = True
     delay = .5
     circumference_cm = 20
     rotation_ticks = 5
