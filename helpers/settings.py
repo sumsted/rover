@@ -1,3 +1,12 @@
+import os
+
+
+def get_environ(key):
+    try:
+        return os.environ[key]
+    except KeyError:
+        return None
+
 class controller:
     test = False
     delay = .5
@@ -37,11 +46,11 @@ class ultra:
 
 
 class gps:
-    key = '123'
+    key = get_environ('WHAT_THREE_WORDS_KEY')
     address = '/dev/ttyUSB0'
     delay = .5
     mock_gps = True
-    what_three_words_on = False
+    what_three_words_on = True
 
 
 class motor:

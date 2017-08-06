@@ -38,6 +38,7 @@ class RoverShare:
         self.clear_led_queue()
         self.clear_sense_queue()
         self.clear_ultra_queue()
+        self.clear_gps_queue()
 
     def push_all_end(self):
         self.push_command('end')
@@ -198,7 +199,7 @@ class RoverShare:
     # gps state
     def update_gps(self, gps):
         serial_json = json.dumps(gps)
-        return self.r.set(RoverShare.ultrasonic_key, serial_json)
+        return self.r.set(RoverShare.gps_key, serial_json)
 
     def get_gps(self):
         try:

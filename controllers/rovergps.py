@@ -15,7 +15,6 @@ else:
 import time
 from math import pi, sin, cos, atan2, radians, degrees
 
-
 """
 Uses pygarmin library to pull in current gps state.
 Only the even calls to retrieve data have usable data.
@@ -23,6 +22,7 @@ Will use what three words to identify destination.
 Perhaps add these calls to a helper so that the controller can use it.
 
 """
+
 
 # callback from garmin get pvt , not currently used
 def gps_pvt_callback(pvt, record_number, total_points_to_get, tp):
@@ -57,7 +57,7 @@ class RoverGps:
         while True:
             # update gps data every other call
             # seems like all odd calls contain strange data, so only use even data
-            pvt = self.gps.getPvt(gps_pvt_callback())
+            pvt = self.gps.getPvt(gps_pvt_callback)
             if not skip:
                 self.get_gps_state(pvt)
                 self.rs.update_gps(self.gps_state)
@@ -71,12 +71,16 @@ class RoverGps:
                 if command is not None:
                     if command['command'] == 'set_destination':
                         self.gps_state['destination_lat'] = command['destination_lat'] or 0.0
-                        self.gps_state['destination_lom'] = command['destination_lon'] or 0.0
-                        self.gps_state['destination_three_words'] = command['destination_lthree_words'] or ''
+                        self.gps_state['destination_lon'] = command['destination_lon'] or 0.0
+                        self.gps_state['destination_three_words'] = command['destination_three_words'] or ''
                         if self.gps_state['destination_lat'] == 0.0 and self.gps_state['destination_lon'] == 0.0 and \
                                         self.gps_state['destination_three_words'] != '':
-                            self.gps_state['destination_three_words'] = self.get_coordinates_from_words(
+                            self.gps_state['destination_lat'], self.gps_state[
+                                'destination_lon'] = self.get_coordinates_from_words(
                                 self.gps_state['destination_three_words'])
+                        else:
+                            self.gps_state['destination_three_words'] = self.get_words_from_coordinates(
+                                (self.gps_state['destination_lat'], self.gps_state['destination_lon']))
                         self.rs.push_status('gps: destination set')
                     elif command['command'] == 'end':
                         self.rs.push_status('gps: end command received')
@@ -106,7 +110,7 @@ class RoverGps:
         self.gps_state['lon'] = pvt.rlon * 180 / pi
         self.gps_state['bearing'] = self.get_heading((self.gps_state['lat'], self.gps_state['lon']),
                                                      (self.gps_state['destination_lat'],
-                                                      self.gps_state['desintation_lon']))
+                                                      self.gps_state['destination_lon']))
         self.gps_state['altitude_meters'] = pvt.alt + pvt.msl_height
         self.gps_state['altitude_feet'] = self.gps_state['altitude_meters'] * 3.2808398950131
         self.gps_state['position_error_feet'] = pvt.epe * 3.2808398950131
