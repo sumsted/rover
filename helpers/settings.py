@@ -36,6 +36,14 @@ class ultra:
     mock_serial = True
 
 
+class gps:
+    key = '123'
+    address = '/dev/ttyUSB0'
+    delay = .5
+    mock_gps = True
+    what_three_words_on = False
+
+
 class motor:
     pass
 
@@ -63,6 +71,8 @@ class share:
     led_queue_key = 'led_queue'
     ultrasonic_queue_key = 'ultrasonic_queue'
     map_hash_key = 'map_hash'
+    gps_queue_key = 'gps_queue'
+    gps_key = 'gps'
 
 
 class client:

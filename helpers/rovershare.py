@@ -20,6 +20,9 @@ class RoverShare:
     ultrasonic_key = settings.share.ultrasonic_key
     ultrasonic_queue_key = settings.share.ultrasonic_queue_key
 
+    gps_key = settings.share.gps_key
+    gps_queue_key = settings.share.gps_queue_key
+
     led_queue_key = settings.share.led_queue_key
 
     status_list_key = settings.share.status_list_key
@@ -146,6 +149,26 @@ class RoverShare:
             return None
 
     ###############################
+    # used by gps controller
+    def clear_gps_queue(self):
+        return self.r.delete(RoverShare.gps_queue_key)
+
+    def push_gps(self, command, destination_lat=None, destination_lon=None, destination_three_words=None):
+        command = {'command': command, 'destination_lat': destination_lat, 'destination_lon': destination_lon,
+                   'destination_three_words': destination_three_words}
+        serial_json = json.dumps(command)
+        result = self.r.lpush(RoverShare.gps_queue_key, serial_json)
+        self.delay()
+        return result
+
+    def pop_gps(self):
+        try:
+            serial_json = self.r.rpop(RoverShare.gps_queue_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
+
+    ###############################
     # sense hat state
     def update_sense(self, sense):
         serial_json = json.dumps(sense)
@@ -167,6 +190,19 @@ class RoverShare:
     def get_ultrasonic(self):
         try:
             serial_json = self.r.get(RoverShare.ultrasonic_key).decode()
+            return json.loads(serial_json)
+        except AttributeError:
+            return None
+
+    ###############################
+    # gps state
+    def update_gps(self, gps):
+        serial_json = json.dumps(gps)
+        return self.r.set(RoverShare.ultrasonic_key, serial_json)
+
+    def get_gps(self):
+        try:
+            serial_json = self.r.get(RoverShare.gps_key).decode()
             return json.loads(serial_json)
         except AttributeError:
             return None
