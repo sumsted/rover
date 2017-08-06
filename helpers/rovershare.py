@@ -226,12 +226,14 @@ class RoverShare:
     def clear_status(self):
         return self.r.delete(RoverShare.status_list_key)
 
+    # todo make status a strucuture that includes seconds as id
     def push_status(self, status):
         now = datetime.now()
         msg = '%s %s' % (now, status or '** chirp chirp **')
         print(msg)
         return self.r.lpush(RoverShare.status_list_key, msg)
 
+    # todo then add a way to pull since passing in id and limit to 100
     def pull_last_status(self):
         try:
             return self.r.lindex(RoverShare.status_list_key, 0).decode()

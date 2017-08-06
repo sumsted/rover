@@ -44,7 +44,8 @@ class RoverGps:
             'destination_lat': 0.0,
             'destination_lon': 0.0,
             'destination_three_words': '',
-            'bearing': 0.0
+            'heading': 0.0,
+            'fix': 0
         }
         self.rs = RoverShare()
         self.device = garmin.SerialLink(settings.gps.address)
@@ -107,9 +108,10 @@ class RoverGps:
         return B
 
     def get_gps_state(self, pvt):
+        self.gps_state['fix'] = pvt.fix
         self.gps_state['lat'] = pvt.rlat * 180 / pi
         self.gps_state['lon'] = pvt.rlon * 180 / pi
-        self.gps_state['bearing'] = self.get_heading((self.gps_state['lat'], self.gps_state['lon']),
+        self.gps_state['heading'] = self.get_heading((self.gps_state['lat'], self.gps_state['lon']),
                                                      (self.gps_state['destination_lat'],
                                                       self.gps_state['destination_lon']))
         self.gps_state['altitude_meters'] = pvt.alt + pvt.msl_height
