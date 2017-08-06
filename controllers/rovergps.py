@@ -63,7 +63,7 @@ class RoverGps:
             if not skip:
                 self.get_gps_state(pvt)
                 self.rs.update_gps(self.gps_state)
-                skip = True
+                skip = False
             else:
                 skip = False
 
