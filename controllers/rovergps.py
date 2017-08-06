@@ -60,10 +60,10 @@ class RoverGps:
             # update gps data every other call
             # seems like all odd calls contain strange data, so only use even data
             pvt = self.gps.getPvt(gps_pvt_callback)
-            if not skip:
+            if True:#not skip:
                 self.get_gps_state(pvt)
                 self.rs.update_gps(self.gps_state)
-                skip = False
+                skip = True
             else:
                 skip = False
 
