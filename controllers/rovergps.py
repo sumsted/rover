@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
@@ -30,6 +29,14 @@ def gps_pvt_callback(pvt, record_number, total_points_to_get, tp):
 
 
 class RoverGps:
+
+    FIX_TYPE = {
+        2: '2D',
+        3: '3D',
+        4: '2D_diff',
+        5: '3D_diff'
+    }
+
     def __init__(self):
         self.gps_state = {
             'mock': settings.gps.mock_gps,
@@ -45,7 +52,9 @@ class RoverGps:
             'destination_lon': 0.0,
             'destination_three_words': '',
             'heading': 0.0,
-            'fix': 0
+            'fix': 0,
+            'last_update': 0.0,
+            'delta_seconds': 0.0
         }
         self.rs = RoverShare()
         self.device = garmin.SerialLink(settings.gps.address)
@@ -55,17 +64,13 @@ class RoverGps:
 
     def start(self):
         self.rs.push_status('gps: begin control loop')
-        skip = True
         while True:
-            # update gps data every other call
-            # seems like all odd calls contain strange data, so only use even data
+            # update gps data when fix is usable
+            # seeing some freaky fix values 2500+
             pvt = self.gps.getPvt(gps_pvt_callback)
-            if True:#not skip:
+            if pvt.fix in RoverGps.FIX_TYPE.keys():
                 self.get_gps_state(pvt)
                 self.rs.update_gps(self.gps_state)
-                skip = True
-            else:
-                skip = False
 
             # process any commands received, should be few
             command = self.rs.pop_gps()
@@ -108,7 +113,10 @@ class RoverGps:
         return B
 
     def get_gps_state(self, pvt):
-        self.gps_state['fix'] = pvt.fix
+        now = time.time()
+        self.gps_state['delta_seconds'] = now - self.gps_state['last_update']
+        self.gps_state['last_update'] = now
+        self.gps_state['fix'] = RoverGps.FIX_TYPE[pvt.fix]
         self.gps_state['lat'] = pvt.rlat * 180 / pi
         self.gps_state['lon'] = pvt.rlon * 180 / pi
         self.gps_state['heading'] = self.get_heading((self.gps_state['lat'], self.gps_state['lon']),
