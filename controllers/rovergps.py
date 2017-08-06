@@ -1,11 +1,11 @@
 import os
 import sys
 
-from helpers.whatthreewords import get_coordinates_from_words, get_words_from_coordinates
 
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.rovershare import RoverShare
+from helpers.whatthreewords import get_coordinates_from_words, get_words_from_coordinates
 
 if not settings.gps.mock_gps:
     import garmin
