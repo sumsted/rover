@@ -17,9 +17,10 @@ class Motor:
     def __init__(self):
         self.device = serial.Serial(settings.motors.address, 9600, timeout=.5)
 
-    def send_packet(self, packet):
+    def write_packet(self, packet):
         print('writing to device: %s' % packet)
         num_bytes = self.device.write(packet.encode())
+        print('bytes written: %d' % num_bytes)
         return num_bytes
 
     def read_packet(self):
@@ -30,7 +31,7 @@ class Motor:
             return None
         else:
             packet = Motor.PACKET % ('F', l, r)
-            self.send_packet(packet)
+            self.write_packet(packet)
             result = self.read_packet()
             return json.loads(result.decode())
 
