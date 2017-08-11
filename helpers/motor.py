@@ -13,7 +13,7 @@ else:
 
 class Motor:
     PACKET = "%1s%04d%04d!"
-    TEST_SPEED = 25
+    TEST_SPEED = 50
     
     def __init__(self):
         self.device = serial.Serial(settings.motors.address, 9600, timeout=.5)
