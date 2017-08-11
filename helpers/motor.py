@@ -18,8 +18,8 @@ class Motor:
         self.device = serial.Serial(settings.motors.address, 9600, timeout=.5)
 
     def send_packet(self, packet):
-        print('writing to device: %s' % packet.encode())
-        num_bytes = self.device.write(packet)
+        print('writing to device: %s' % packet)
+        num_bytes = self.device.write(packet.encode())
         return num_bytes
 
     def read_packet(self):
