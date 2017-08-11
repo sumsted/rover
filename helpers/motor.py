@@ -53,4 +53,7 @@ def rotate(r):
 
 if __name__ == '__main__':
     m = Motor()
-    print(m.move(50, -50))
+
+    for l in range(-100, 101):
+        for r in range(-100, 101):
+            print(m.move(l, r))
