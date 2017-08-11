@@ -109,7 +109,7 @@ class RoverUltraEncoder:
         encoders = None
         try:
             self.nano.write('u50!')
-            result = self.nano.readLine() or '{"left": 0}'
+            result = self.nano.readline() or '{"left": 0}'
             encoders = json.loads(result.decode("utf-8"))
             return encoders['left']
         except Exception as e:
