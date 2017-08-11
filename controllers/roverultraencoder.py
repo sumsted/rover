@@ -117,10 +117,10 @@ class RoverUltraEncoder:
             return 0
 
     def clear_serial_buffer(self):
-        self.nano.readLine()
-        self.nano.readLine()
-        self.nano.readLine()
-        self.nano.readLine()
+        self.nano.readline()
+        self.nano.readline()
+        self.nano.readline()
+        self.nano.readline()
         self.nano.write('x!'.encode())
         self.nano.write('x!'.encode())
 
