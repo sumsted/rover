@@ -2,10 +2,14 @@ import json
 import os
 import sys
 
-from mock import serial
 
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
+
+if not settings.motors.test:
+    import serial
+else:
+    from mock import serial
 
 
 class Motor:
