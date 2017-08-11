@@ -40,22 +40,22 @@ class Motor:
         return self.move(0, 0)
 
     def forward(self):
-        self.move(Motor.TEST_SPEED, Motor.TEST_SPEED)
+        return self.move(Motor.TEST_SPEED, Motor.TEST_SPEED)
 
     def backward(self):
-        self.move(-Motor.TEST_SPEED, -Motor.TEST_SPEED)
+        return self.move(-Motor.TEST_SPEED, -Motor.TEST_SPEED)
 
     def left(self):
-        self.move(0, Motor.TEST_SPEED)
+        return self.move(0, Motor.TEST_SPEED)
 
     def right(self):
-        self.move(Motor.TEST_SPEED, 0)
+        return self.move(Motor.TEST_SPEED, 0)
 
     def rotate_left(self):
-        self.move(-Motor.TEST_SPEED, Motor.TEST_SPEED)
+        return self.move(-Motor.TEST_SPEED, Motor.TEST_SPEED)
 
     def rotate_right(self):
-        self.move(Motor.TEST_SPEED, -Motor.TEST_SPEED)
+        return self.move(Motor.TEST_SPEED, -Motor.TEST_SPEED)
 
 
 if __name__ == '__main__':
