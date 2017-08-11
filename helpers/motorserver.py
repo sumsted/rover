@@ -1,4 +1,7 @@
+import os
+
 from bottle import get, route, request, response, run, post
+sys.path.insert(0, os.path.abspath('..'))
 
 from helpers import motor
 
