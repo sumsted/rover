@@ -19,8 +19,8 @@ class Motor:
         self.device = serial.Serial(settings.motors.address, 9600, timeout=.5)
 
     def send_packet(self, packet):
-        print('writing to device: %s' % self.START_SESSION_PACKET)
-        self.device.write(self.START_SESSION_PACKET)
+        print('writing to device: %s' % packet)
+        self.device.write(packet)
 
     def read_packet(self):
         return self.device.readline()
