@@ -25,7 +25,7 @@ class encoders:
 
 
 class motors:
-    test = True
+    test = False
     address = '/dev/ttyUSB0'
 
 
