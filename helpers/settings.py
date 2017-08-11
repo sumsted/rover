@@ -7,6 +7,7 @@ def get_environ(key):
     except KeyError:
         return None
 
+
 class controller:
     test = False
     delay = .5
@@ -20,6 +21,11 @@ class encoders:
     delay = .5
     circumference_cm = 20
     rotation_ticks = 5
+    address = '/dev/ttyUSB0'
+
+
+class motors:
+    test = True
     address = '/dev/ttyUSB0'
 
 
