@@ -13,7 +13,8 @@ else:
 
 class Motor:
     PACKET = "%1s%04d%04d!"
-
+    TEST_SPEED = 25
+    
     def __init__(self):
         self.device = serial.Serial(settings.motors.address, 9600, timeout=.5)
 
@@ -36,19 +37,25 @@ class Motor:
             return json.loads(result.decode())
 
     def stop(self):
-        pass
+        return self.move(0, 0)
 
+    def forward(self):
+        self.move(Motor.TEST_SPEED, Motor.TEST_SPEED)
 
-def left():
-    pass
+    def backward(self):
+        self.move(-Motor.TEST_SPEED, -Motor.TEST_SPEED)
 
+    def left(self):
+        self.move(0, Motor.TEST_SPEED)
 
-def right():
-    pass
+    def right(self):
+        self.move(Motor.TEST_SPEED, 0)
 
+    def rotate_left(self):
+        self.move(-Motor.TEST_SPEED, Motor.TEST_SPEED)
 
-def rotate(r):
-    pass
+    def rotate_right(self):
+        self.move(Motor.TEST_SPEED, -Motor.TEST_SPEED)
 
 
 if __name__ == '__main__':
