@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+
 sys.path.insert(0, os.path.abspath('..'))
 from helpers import settings
 from helpers.pid import Pid
@@ -39,7 +40,6 @@ interference both temp and magnetic, map use joystick to post commands back to c
 
 
 class RoverController:
-
     null_command = {'command': 'null'}
 
     def __init__(self):
@@ -65,6 +65,7 @@ class RoverController:
                     self.rs.push_sense('set_base', 0)
                     self.rs.push_encoders('set_base', 0)
                     motor.stop()
+                    self.rs.push_status("controller: command received: %s" % command)
 
                 if command['command'] == 'stop':
                     motor.stop()
@@ -158,7 +159,8 @@ class RoverController:
                         motor.stop()
                         self.rs.push_status('controller: unknown command: %s' % command['command'])
             except Exception as e:
-                self.rs.push_status('controller: EXCEPTION: new_command: %s, command: %s, %s' % (str(new_command), str(command), str(e)))
+                self.rs.push_status('controller: EXCEPTION: new_command: %s, command: %s, %s' % (
+                str(new_command), str(command), str(e)))
             # slow things down a bit
             time.sleep(settings.controller.delay)
 
