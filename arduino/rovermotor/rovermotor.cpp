@@ -2,22 +2,28 @@
 #include <Servo.h>
 #include "SimpleTimer.h"
 
-#define MOTOR_PIN_LF 3
-#define MOTOR_PIN_LR 5
-#define MOTOR_PIN_RF 6
-#define MOTOR_PIN_RR 9
+#define PWM_PIN_LF 3
+#define PWM_PIN_LR 5
+#define PWM_PIN_RF 6
+#define PWM_PIN_RR 9
+
+#define DIR_PIN_LF 2
+#define DIR_PIN_LR 4
+#define DIR_PIN_RF 7
+#define DIR_PIN_RR 8
 
 #define LED_PIN 13
 
 #define MOTOR_ORIENTATION_LEFT 1
 #define MOTOR_ORIENTATION_RIGHT -1
 
-#define PWM_FULL_FORWARD 2000
-#define PWM_STOP 1500
-#define PWM_FULL_BACKWARD 1000
+// should be duty range for cytron mdd10a
+#define PWM_FULL_FORWARD 255
+#define PWM_STOP 127
+#define PWM_FULL_BACKWARD 0
 #define PWM_TUNE_PERCENTAGE .5
 
-#define SAFETY_CADENCE_MS 500  // millisecs
+#define SAFETY_CADENCE_MS 250  // millisecs
 
 #define MAX_BUFFER_SIZE 50
 
@@ -117,10 +123,26 @@ void setup() {
     Serial.println("begin");
     timer.setInterval(SAFETY_CADENCE_MS, safetyCheck);
     pinMode(LED_PIN, OUTPUT);
-    motorLeftFront.attach(MOTOR_PIN_LF);
-    motorLeftRear.attach(MOTOR_PIN_LR);
-    motorRightFront.attach(MOTOR_PIN_RF);
-    motorRightRear.attach(MOTOR_PIN_RR);
+
+    // setting up for locked antiphase for cytron mdd10a
+    // in this way it works like a frc pwm, one pwm signal
+    // to control forward and reverse
+    // the pwm from nano should be wired to dir pin on controller
+    // and the dir pin should be wired to pwm on controller
+    pinMode(DIR_PIN_LF, OUTPUT);
+    pinMode(DIR_PIN_LR, OUTPUT);
+    pinMode(DIR_PIN_RF, OUTPUT);
+    pinMode(DIR_PIN_RR, OUTPUT);
+
+    digitalWrite(DIR_PIN_LF, HIGH)
+    digitalWrite(DIR_PIN_LR, HIGH)
+    digitalWrite(DIR_PIN_RF, HIGH)
+    digitalWrite(DIR_PIN_RR, HIGH)
+
+    motorLeftFront.attach(PWM_PIN_LF);
+    motorLeftRear.attach(PWM_PIN_LR);
+    motorRightFront.attach(PWM_PIN_RF);
+    motorRightRear.attach(PWM_PIN_RR);
 }
 
 void loop() {
