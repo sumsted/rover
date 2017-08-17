@@ -226,9 +226,9 @@ class RoverShare:
     def clear_status(self):
         return self.r.delete(RoverShare.status_list_key)
 
-    # todo make status a strucuture that includes seconds as id
+    # todo make status a structure that includes seconds as id
     def push_status(self, status):
-        now = datetime.now()
+        now = datetime.now().strftime("%Y%m%d.%H%M.%S.%f")
         msg = '%s %s' % (now, status or '** chirp chirp **')
         print(msg)
         return self.r.lpush(RoverShare.status_list_key, msg)
