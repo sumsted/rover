@@ -82,6 +82,8 @@ class RoverUltraEncoder:
                     elif command['command'] == 'end':
                         self.rs.push_status('ultraencoder: end command received')
                         break
+                    elif command['command'] == 'ping':
+                        self.rs.push_status("ultraencoder: pong")
                     else:
                         self.rs.push_status('ultraencoder: unknown command: %s' % command['command'])
             except Exception as e:

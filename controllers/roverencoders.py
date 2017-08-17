@@ -41,7 +41,9 @@ class RoverEncoders:
                     elif command['command'] == 'end':
                         self.rs.push_status('encoders: end command received')
                         break
-                    else:
+                    elif command['command'] == 'ping':
+                        self.rs.push_status("encoders: pong")
+                else:
                         self.rs.push_status('encoders: unknown command: %s' % command['command'])
             except Exception as e:
                 self.rs.push_status('encoders: EXCEPTION: command: %s, %s' % (str(command), str(e)))

@@ -133,6 +133,10 @@ class RoverController:
                         sign = -1 if sense['direction_deviation'] > 0 else 1
                         motor.move(sign * command['speed'] / 2, (sign * -1) * command['speed'] / 2)
 
+                elif command['command'] == 'ping':
+                    if new_command is not None:
+                        self.rs.push_status("controller: pong")
+
                 elif command['command'] == 'direct':
                     # todo with joystick or other command input
                     pass

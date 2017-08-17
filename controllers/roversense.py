@@ -78,6 +78,8 @@ class RoverSense:
                     elif command['command'] == 'set_base':
                         self.set_base()
                         self.rs.push_status('sense: set_base')
+                    elif command['command'] == 'ping':
+                        self.rs.push_status("sense: pong")
                     elif command['command'] == 'end':
                         self.rs.push_status('sense: end command received')
                         break

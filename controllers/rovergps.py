@@ -89,6 +89,8 @@ class RoverGps:
                             self.gps_state['destination_three_words'] = self.get_words_from_coordinates(
                                 (self.gps_state['destination_lat'], self.gps_state['destination_lon']))
                         self.rs.push_status('gps: destination set')
+                    elif command['command'] == 'ping':
+                        self.rs.push_status("gps: pong")
                     elif command['command'] == 'end':
                         self.rs.push_status('gps: end command received')
                         break

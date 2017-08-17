@@ -92,6 +92,8 @@ class RoverLed:
                     elif command['command'] == 'end':
                         self.rs.push_status('led: end command received')
                         break
+                    elif command['command'] == 'ping':
+                        self.rs.push_status("led: pong")
                     else:
                         self.rs.push_status('led: unknown command: %s' % command['command'])
                 else:
