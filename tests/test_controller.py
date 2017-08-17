@@ -82,6 +82,11 @@ class TestController(TestCase):
     def delay(self, duration=4):
         time.sleep(duration)
 
+    def test_ping(self):
+        self.rs.push_command('ping')
+        self.delay()
+        self.assert_status('controller: pong', 'controller not responding to ping')
+
     def test_forward(self):
         self.rs.update_ultrasonic({
             'left': 0.0,

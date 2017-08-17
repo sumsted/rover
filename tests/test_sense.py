@@ -80,6 +80,11 @@ class TestSense(TestCase):
     def delay(self, duration=4):
         time.sleep(duration)
 
+    def test_ping(self):
+        self.rs.push_sense('ping')
+        self.delay()
+        self.assert_status('sense: pong', 'sense not responding to ping')
+
     def test_heading(self):
         self.rs.push_sense('set_heading', heading=91.0)
         self.delay()

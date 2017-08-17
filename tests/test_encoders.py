@@ -80,6 +80,11 @@ class TestEncoders(TestCase):
     def delay(self, duration=4):
         time.sleep(duration)
 
+    def test_ping(self):
+        self.rs.push_encoders('ping')
+        self.delay()
+        self.assert_status('ultraencoder: pong', 'ultraencoder not responding to ping')
+
     def test_base(self):
         self.rs.update_encoders({
             'ticks': 1,

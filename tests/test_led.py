@@ -80,6 +80,11 @@ class TestLed(TestCase):
     def delay(self, duration=4):
         time.sleep(duration)
 
+    def test_ping(self):
+        self.rs.push_led('ping')
+        self.delay()
+        self.assert_status('led: pong', 'led not responding to ping')
+
     def test_deviation(self):
         self.rs.update_sense({
             'temperature': 0.0,

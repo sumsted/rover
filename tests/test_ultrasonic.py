@@ -85,3 +85,8 @@ class TestUltrasonic(TestCase):
         self.rs.push_ultrasonic('set_your_face', None)
         self.delay()
         self.assert_status('ultraencoder: unknown command', 'encoder unknown command status not found')
+
+    def test_ping(self):
+        self.rs.push_ultrasonic('ping')
+        self.delay()
+        self.assert_status('ultraencoder: pong', 'controller not responding to ping')

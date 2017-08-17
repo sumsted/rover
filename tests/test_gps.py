@@ -37,6 +37,11 @@ class TestGps(TestCase):
     def delay(self, duration=4):
         time.sleep(duration)
 
+    def test_ping(self):
+        self.rs.push_gps('ping')
+        self.delay()
+        self.assert_status('gps: pong', 'gps not responding to ping')
+
     def test_destination_coordinates(self):
         self.rs.push_gps('set_destination', destination_lat=35.082241, destination_lon=-89.652481)
         self.delay()
