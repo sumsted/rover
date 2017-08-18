@@ -9,7 +9,7 @@ from helpers.rovermap import RoverMap
 from helpers.rovershare import RoverShare
 
 if not settings.controller.test:
-    from helpers import motor
+    from helpers.motor import Motor
 else:
     from mock import motor
 
@@ -46,6 +46,7 @@ class RoverController:
         self.rs = RoverShare()
         self.pid = Pid()
         self.map = RoverMap()
+        self.motor = Motor()
         self.rs.clear_all_queues()
         self.rs.push_status('controller: initialization complete')
 
@@ -64,11 +65,11 @@ class RoverController:
                     command = new_command
                     self.rs.push_sense('set_base', 0)
                     self.rs.push_encoders('set_base', 0)
-                    motor.stop()
+                    self.motor.stop()
                     self.rs.push_status("controller: command received: %s" % command)
 
                 if command['command'] == 'stop':
-                    motor.stop()
+                    self.motor.stop()
                     self.rs.push_status('controller: stop')
                     command = RoverController.null_command
 
@@ -88,7 +89,7 @@ class RoverController:
                     if ultrasonic['front'] <= settings.controller.safe_distance or \
                                     ultrasonic['lower_deviation'] <= -settings.controller.safe_incline or \
                                     ultrasonic['lower_deviation'] >= settings.controller.safe_incline:
-                        motor.stop()
+                        self.motor.stop()
                         command['command'] = 'stop'
                         self.rs.push_status(
                             'controller: proximity warning, all stop, front: %f, lower_deviation: %f, lower: %f' % (
@@ -97,14 +98,14 @@ class RoverController:
                         # check distance and move
                         encoders = self.rs.get_encoders()
                         if encoders['distance'] >= command['distance']:
-                            motor.stop()
+                            self.motor.stop()
                             command['command'] = 'stop'
                             self.rs.push_status('controller: forward distance reached, distance: %f, encoder: %f' % (
                                 command['distance'], encoders['distance']))
                         else:
                             if encoders['distance'] % 20 == 0:
                                 self.rs.push_status('controller: forward distance travelled: %d' % encoders['distance'])
-                            motor.move(command['speed'] + (direction_change / 2),
+                                self.motor.move(command['speed'] + (direction_change / 2),
                                        command['speed'] + (-1 * (direction_change / 2)))
 
                 elif command['command'] == 'rotate':
@@ -124,14 +125,14 @@ class RoverController:
                     sense = self.rs.get_sense()
                     if RoverController.approx(sense['direction_deviation'], sense['direction_base'],
                                               settings.controller.direction_deviation_range):
-                        motor.stop()
+                        self.motor.stop()
                         command['command'] = 'stop'
                         self.rs.push_status(
                             'controller: rotation reached, direction: %f, direction_deviation: %f, direction_base: %f' % (
                                 sense['direction'], sense['direction_deviation'], sense['direction_base']))
                     else:
                         sign = -1 if sense['direction_deviation'] > 0 else 1
-                        motor.move(sign * command['speed'] / 2, (sign * -1) * command['speed'] / 2)
+                        self.motor.move(sign * command['speed'] / 2, (sign * -1) * command['speed'] / 2)
 
                 elif command['command'] == 'ping':
                     if new_command is not None:
@@ -146,7 +147,7 @@ class RoverController:
                     pass
 
                 elif command['command'] == 'end':
-                    motor.stop()
+                    self.motor.stop()
                     self.rs.push_status('controller: end command received, ending all controllers')
                     self.rs.push_sense('end', None)
                     self.rs.push_encoders('end', None)
@@ -160,7 +161,7 @@ class RoverController:
 
                 else:
                     if new_command is not None:
-                        motor.stop()
+                        self.motor.stop()
                         self.rs.push_status('controller: unknown command: %s' % command['command'])
             except Exception as e:
                 self.rs.push_status('controller: EXCEPTION: new_command: %s, command: %s, %s' % (

@@ -1,19 +1,15 @@
-def left():
-    pass
+class Motor:
+    def left(self):
+        pass
 
+    def right(self):
+        pass
 
-def right():
-    pass
+    def move(self, l, r):
+        pass
 
+    def rotate(self, r):
+        pass
 
-def move(l, r):
-    pass
-
-
-def rotate(r):
-    pass
-
-
-def stop():
-    pass
-
+    def stop(self):
+        pass
