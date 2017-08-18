@@ -1,6 +1,16 @@
 import os
 
 
+def get_usb_device(name, default='/dev/ttyUSB0'):
+    try:
+        results = os.popen('dmesg |grep -i "ttyUSB"| grep -i "now attached"').read().split('\n')
+        for line in reversed(results):
+            if name in line:
+                return line.split(' ')[-1]
+    finally:
+        return default
+
+
 def get_environ(key):
     try:
         return os.environ[key]
@@ -21,12 +31,12 @@ class encoders:
     delay = .5
     circumference_cm = 20
     rotation_ticks = 5
-    address = '/dev/ttyUSB0'
+    address = get_usb_device('ch341')
 
 
 class motors:
     test = False
-    address = '/dev/ttyUSB0'
+    address = get_usb_device('ch341')
 
 
 class map:
@@ -47,13 +57,13 @@ class ultra:
     max = 600
     test = False
     delay = .5
-    address = '/dev/ttyUSB0'
+    address = get_usb_device('ch341')
     mock_serial = True
 
 
 class gps:
     key = get_environ('WHAT_THREE_WORDS_KEY')
-    address = '/dev/ttyUSB0'
+    address = get_usb_device('Garmin')
     delay = .5
     mock_gps = False
     what_three_words_on = True
