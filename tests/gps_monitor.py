@@ -11,5 +11,6 @@ if __name__=='__main__':
     rs = RoverShare()
     while True:
         g = rs.get_gps()
+        rs.push_gps('ping')
         print(g)
         time.sleep(1)
