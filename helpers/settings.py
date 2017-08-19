@@ -7,7 +7,7 @@ def get_usb_device(name, default='/dev/ttyUSB0'):
         for line in reversed(results):
             print(line)
             if name in line:
-                return line.split(' ')[-1]
+                return '/dev/'+line.split(' ')[-1]
     except Exception as e:
         print(e)
     finally:
