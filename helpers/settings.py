@@ -5,8 +5,11 @@ def get_usb_device(name, default='/dev/ttyUSB0'):
     try:
         results = os.popen('dmesg |grep -i "ttyUSB"| grep -i "now attached"').read().split('\n')
         for line in reversed(results):
+            print(line)
             if name in line:
                 return line.split(' ')[-1]
+    except Exception as e:
+        print(e)
     finally:
         return default
 
