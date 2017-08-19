@@ -14,7 +14,7 @@ else:
 class Motor:
     PACKET = "%1s%04d%04d!"
     TEST_SPEED = 50
-    
+
     def __init__(self):
         self.device = serial.Serial(settings.motors.address, 9600, timeout=.5)
 
@@ -34,6 +34,7 @@ class Motor:
             packet = Motor.PACKET % ('F', l, r)
             self.write_packet(packet)
             result = self.read_packet()
+            print("result: %s" % result)
             return json.loads(result.decode())
 
     def stop(self):
