@@ -10,8 +10,7 @@ def get_usb_device(name, default='/dev/ttyUSB0'):
                 return '/dev/'+line.split(' ')[-1]
     except Exception as e:
         print(e)
-    finally:
-        return default
+    return default
 
 
 def get_environ(key):
