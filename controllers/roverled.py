@@ -75,8 +75,9 @@ class RoverLed:
         self.rs = RoverShare()
         self.led_matrix = [[RoverLed.BLACK for x in range(8)] for y in range(8)]
         self.sense.set_rotation(90)
-        self.rs.push_status('led: initialization complete')
+        self.rs.clear_led_queue()
         self.beat_index = 0
+        self.rs.push_status('led: initialization complete')
 
     def start(self):
         self.rs.push_status('led: begin control loop')

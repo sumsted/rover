@@ -19,6 +19,7 @@ class RoverEncoders:
             'distance': 0
         }
         self.rs = RoverShare()
+        self.rs.clear_encoders_queue()
         self.rs.push_status('encoders: initialization complete')
 
     def start(self):

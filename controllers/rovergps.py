@@ -60,6 +60,7 @@ class RoverGps:
         self.device = garmin.SerialLink(settings.gps.address)
         self.gps = garmin.Garmin(self.device)
         self.gps.pvtOn()
+        self.rs.clear_gps_queue()
         self.rs.push_status('gps: initialization complete')
 
     def start(self):

@@ -54,6 +54,7 @@ class RoverSense:
             'direction_deviation': 0.0
         }
         self.set_base()
+        self.rs.clear_sense_queue()
         self.rs.push_status('sense: initialization complete')
 
     def start(self):
