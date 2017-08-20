@@ -65,6 +65,6 @@ class Motor:
 if __name__ == '__main__':
     m = Motor()
 
-    for l in range(-100, 101, step=10):
-        for r in range(-100, 101, step=10):
+    for l in range(-100, 101, 10):
+        for r in range(-100, 101, 10):
             print(m.move(l, r))
