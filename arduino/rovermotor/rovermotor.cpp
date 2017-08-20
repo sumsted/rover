@@ -23,7 +23,7 @@
 #define PWM_FULL_BACKWARD 255
 #define PWM_TUNE_PERCENTAGE .5
 
-#define SAFETY_CADENCE_MS 250  // millisecs
+#define SAFETY_CADENCE_MS 500  // millisecs
 
 #define MAX_BUFFER_SIZE 50
 
