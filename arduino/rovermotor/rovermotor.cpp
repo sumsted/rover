@@ -3,34 +3,30 @@
 #include "SimpleTimer.h"
 
 #define PWM_PIN_LF 3
-#define PWM_PIN_LR 5
-#define PWM_PIN_RF 6
+#define PWM_PIN_RF 5
+#define PWM_PIN_LR 6
 #define PWM_PIN_RR 9
 
 #define DIR_PIN_LF 2
-#define DIR_PIN_LR 4
-#define DIR_PIN_RF 7
+#define DIR_PIN_RF 4
+#define DIR_PIN_LR 7
 #define DIR_PIN_RR 8
 
 #define LED_PIN 13
 
 #define MOTOR_ORIENTATION_LEFT 1
-#define MOTOR_ORIENTATION_RIGHT -1
+#define MOTOR_ORIENTATION_RIGHT 1
 
 // should be duty range for cytron mdd10a
-#define PWM_FULL_FORWARD 255
+#define PWM_FULL_FORWARD 0
 #define PWM_STOP 127
-#define PWM_FULL_BACKWARD 0
+#define PWM_FULL_BACKWARD 255
 #define PWM_TUNE_PERCENTAGE .5
 
 #define SAFETY_CADENCE_MS 250  // millisecs
 
 #define MAX_BUFFER_SIZE 50
 
-Servo motorLeftFront;
-Servo motorLeftRear;
-Servo motorRightFront;
-Servo motorRightRear;
 
 SimpleTimer timer;
 
@@ -40,10 +36,10 @@ byte ledVal = HIGH; // safety timer flips the led on and off
 
 void safetyCheck() {
     if(!commandProcessed){
-        motorLeftFront.write(PWM_STOP);
-        motorLeftRear.write(PWM_STOP);
-        motorRightFront.write(PWM_STOP);
-        motorRightRear.write(PWM_STOP);
+        analogWrite(PWM_PIN_LF, PWM_STOP);
+        analogWrite(PWM_PIN_RF, PWM_STOP);
+        analogWrite(PWM_PIN_LR, PWM_STOP);
+        analogWrite(PWM_PIN_RR, PWM_STOP);
     } else {
     }
     commandProcessed = false;
@@ -64,19 +60,19 @@ char *runMotor(int leftSpeed, int rightSpeed){
     int rightPulse = PWM_STOP;
     int leftPulse = PWM_STOP;
     if(leftSpeed > 100 || leftSpeed < -100 || rightSpeed > 100 || rightSpeed < -100){
-        motorLeftFront.write(leftPulse);
-        motorLeftRear.write(leftPulse);
+        analogWrite(PWM_PIN_LF, leftPulse);
+        analogWrite(PWM_PIN_LR, leftPulse);
 
-        motorRightFront.write(rightPulse);
-        motorRightRear.write(rightPulse);
+        analogWrite(PWM_PIN_RF, rightPulse);
+        analogWrite(PWM_PIN_RR, rightPulse);
     } else {
         leftPulse = PWM_STOP + ((PWM_FULL_FORWARD - PWM_STOP) * (leftSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_LEFT);
-        motorLeftFront.write(leftPulse);
-        motorLeftRear.write(leftPulse);
+        analogWrite(PWM_PIN_LF, leftPulse);
+        analogWrite(PWM_PIN_LR, leftPulse);
 
         rightPulse = PWM_STOP + ((PWM_FULL_FORWARD - PWM_STOP) * (rightSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_RIGHT);
-        motorRightFront.write(rightPulse);
-        motorRightRear.write(rightPulse);
+        analogWrite(PWM_PIN_RF, rightPulse);
+        analogWrite(PWM_PIN_RR, rightPulse);
 
         commandProcessed = true;
     }
@@ -130,22 +126,53 @@ void setup() {
     // the pwm from nano should be wired to dir pin on controller
     // and the dir pin should be wired to pwm on controller
     pinMode(DIR_PIN_LF, OUTPUT);
+    pinMode(PWM_PIN_LF, OUTPUT);
+
     pinMode(DIR_PIN_LR, OUTPUT);
+    pinMode(PWM_PIN_LR, OUTPUT);
+
     pinMode(DIR_PIN_RF, OUTPUT);
+    pinMode(PWM_PIN_RF, OUTPUT);
+    
     pinMode(DIR_PIN_RR, OUTPUT);
+    pinMode(PWM_PIN_RR, OUTPUT);
+}
 
-    digitalWrite(DIR_PIN_LF, HIGH)
-    digitalWrite(DIR_PIN_LR, HIGH)
-    digitalWrite(DIR_PIN_RF, HIGH)
-    digitalWrite(DIR_PIN_RR, HIGH)
+void testPwm(){
+    digitalWrite(DIR_PIN_LF, HIGH);
+    digitalWrite(DIR_PIN_RF, HIGH);
+    digitalWrite(DIR_PIN_LR, HIGH);
+    digitalWrite(DIR_PIN_RR, HIGH);
 
-    motorLeftFront.attach(PWM_PIN_LF);
-    motorLeftRear.attach(PWM_PIN_LR);
-    motorRightFront.attach(PWM_PIN_RF);
-    motorRightRear.attach(PWM_PIN_RR);
+    int pwm_value = 0;
+    int opposite_i;
+    int pulse;
+    digitalWrite(DIR_PIN_LF, HIGH);
+    for(pulse=0;pulse<=255;pulse++){
+        analogWrite(PWM_PIN_LF, pulse);
+        analogWrite(PWM_PIN_RF, pulse);
+        analogWrite(PWM_PIN_LR, pulse);
+        analogWrite(PWM_PIN_RR, pulse);
+        delay(50);
+        Serial.println(pulse);        
+    }    
+    for(pulse=255;pulse>=0;pulse--){
+        analogWrite(PWM_PIN_LF, pulse);
+        analogWrite(PWM_PIN_RF, pulse);
+        analogWrite(PWM_PIN_LR, pulse);
+        analogWrite(PWM_PIN_RR, pulse);
+        delay(50);
+        Serial.println(pulse);        
+    }    
 }
 
 void loop() {
+    // testPwm();
+    digitalWrite(DIR_PIN_LF, HIGH);
+    digitalWrite(DIR_PIN_RF, HIGH);
+    digitalWrite(DIR_PIN_LR, HIGH);
+    digitalWrite(DIR_PIN_RR, HIGH);
+
     serialHandler();
     timer.run();
 }

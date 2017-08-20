@@ -1,11 +1,10 @@
 from bottle import run, template, static_file, route, get, TEMPLATE_PATH
 import os
 import sys
-
-from helpers import settings
-
 sys.path.insert(0, os.path.abspath('..'))
+from helpers import settings
 TEMPLATE_PATH.insert(0, './templates')
+
 
 @route('/static/<filepath:path>')
 def server_static(filepath):
