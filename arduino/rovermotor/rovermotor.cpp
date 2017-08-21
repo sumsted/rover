@@ -4,24 +4,26 @@
 
 #define PWM_PIN_LF 3
 #define PWM_PIN_RF 5
-#define PWM_PIN_LR 6
-#define PWM_PIN_RR 9
+#define PWM_PIN_LR 9
+#define PWM_PIN_RR 6
 
 #define DIR_PIN_LF 2
 #define DIR_PIN_RF 4
-#define DIR_PIN_LR 7
-#define DIR_PIN_RR 8
+#define DIR_PIN_LR 8
+#define DIR_PIN_RR 7
 
 #define LED_PIN 13
 
-#define MOTOR_ORIENTATION_LEFT 1
-#define MOTOR_ORIENTATION_RIGHT 1
+#define MOTOR_ORIENTATION_LEFT_FRONT 1
+#define MOTOR_ORIENTATION_LEFT_REAR -1
+#define MOTOR_ORIENTATION_RIGHT_FRONT 1
+#define MOTOR_ORIENTATION_RIGHT_REAR -1
 
 // should be duty range for cytron mdd10a
 #define PWM_FULL_FORWARD 0
 #define PWM_STOP 127
 #define PWM_FULL_BACKWARD 255
-#define PWM_TUNE_PERCENTAGE .5
+#define PWM_TUNE_PERCENTAGE 1
 
 #define SAFETY_CADENCE_MS 500  // millisecs
 
@@ -57,27 +59,37 @@ void doStep(byte step){
 // TODO eventually add each individual motor, once we have encoders on all wheels and
 // are able to offer corrections
 char *runMotor(int leftSpeed, int rightSpeed){
-    int rightPulse = PWM_STOP;
-    int leftPulse = PWM_STOP;
+    int leftFrontPulse = PWM_STOP;
+    int rightFrontPulse = PWM_STOP;
+    int leftRearPulse = PWM_STOP;
+    int rightRearPulse = PWM_STOP;
     if(leftSpeed > 100 || leftSpeed < -100 || rightSpeed > 100 || rightSpeed < -100){
-        analogWrite(PWM_PIN_LF, leftPulse);
-        analogWrite(PWM_PIN_LR, leftPulse);
-
-        analogWrite(PWM_PIN_RF, rightPulse);
-        analogWrite(PWM_PIN_RR, rightPulse);
+        analogWrite(PWM_PIN_LF, leftFrontPulse);
+        analogWrite(PWM_PIN_LR, leftRearPulse);
+        analogWrite(PWM_PIN_RF, rightFrontPulse);
+        analogWrite(PWM_PIN_RR, rightRearPulse);
     } else {
-        leftPulse = PWM_STOP + ((PWM_FULL_FORWARD - PWM_STOP) * (leftSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_LEFT);
-        analogWrite(PWM_PIN_LF, leftPulse);
-        analogWrite(PWM_PIN_LR, leftPulse);
+        // ok
+        leftFrontPulse = PWM_STOP + ( PWM_STOP * (leftSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_LEFT_FRONT);
+        analogWrite(PWM_PIN_LF, leftFrontPulse);
 
-        rightPulse = PWM_STOP + ((PWM_FULL_FORWARD - PWM_STOP) * (rightSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_RIGHT);
-        analogWrite(PWM_PIN_RF, rightPulse);
-        analogWrite(PWM_PIN_RR, rightPulse);
+        // ok
+        rightFrontPulse = PWM_STOP + (PWM_STOP * (rightSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_RIGHT_FRONT);
+        analogWrite(PWM_PIN_RF, rightFrontPulse);
+
+        // ok
+        leftRearPulse = PWM_STOP + (PWM_STOP * (leftSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_LEFT_REAR);
+        analogWrite(PWM_PIN_LR, leftRearPulse);
+
+        // ok
+        rightRearPulse = PWM_STOP + (PWM_STOP * (rightSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_RIGHT_REAR);
+        analogWrite(PWM_PIN_RR, rightRearPulse);
 
         commandProcessed = true;
     }
     char result[100];
-    sprintf(result, "{\"leftPulse\":%d,\"rightPulse\":%d}", leftPulse, rightPulse);
+    sprintf(result, "{\"leftSpeed\":%d,\"rightSpeed\":%d,\"leftFrontPulse\":%d,\"rightFrontPulse\":%d,\"leftRearPulse\":%d,\"rightRearPulse\":%d}", 
+            leftSpeed, rightSpeed, leftFrontPulse, rightFrontPulse, leftRearPulse, rightRearPulse);
     return result;
 }
 
@@ -116,7 +128,7 @@ void serialHandler(){
 void setup() {
     Serial.begin(9600);
     while(!Serial){}
-    Serial.println("begin");
+    Serial.println("{\"status\":\"begin\"}");
     timer.setInterval(SAFETY_CADENCE_MS, safetyCheck);
     pinMode(LED_PIN, OUTPUT);
 
@@ -127,15 +139,17 @@ void setup() {
     // and the dir pin should be wired to pwm on controller
     pinMode(DIR_PIN_LF, OUTPUT);
     pinMode(PWM_PIN_LF, OUTPUT);
-
     pinMode(DIR_PIN_LR, OUTPUT);
     pinMode(PWM_PIN_LR, OUTPUT);
-
     pinMode(DIR_PIN_RF, OUTPUT);
     pinMode(PWM_PIN_RF, OUTPUT);
-    
     pinMode(DIR_PIN_RR, OUTPUT);
     pinMode(PWM_PIN_RR, OUTPUT);
+
+    analogWrite(PWM_PIN_LF, PWM_STOP);
+    analogWrite(PWM_PIN_RF, PWM_STOP);
+    analogWrite(PWM_PIN_LR, PWM_STOP);
+    analogWrite(PWM_PIN_RR, PWM_STOP);
 }
 
 void testPwm(){
