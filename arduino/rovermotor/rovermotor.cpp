@@ -109,26 +109,30 @@ void serialHandler(){
 
         readString.toCharArray(readBuffer, MAX_BUFFER_SIZE);
         char command = readBuffer[0];
+        switch(command){
+            case 'I':
+                Serial.write("{\"id\":\"motor\"}");    
+                break;
+            default:
+                char leftSpeedBuffer[5];
+                memcpy(leftSpeedBuffer, readBuffer+1, 4);
+                leftSpeedBuffer[4] = '\0';
+                int leftSpeed = atoi(leftSpeedBuffer);
 
-        char leftSpeedBuffer[5];
-        memcpy(leftSpeedBuffer, readBuffer+1, 4);
-        leftSpeedBuffer[4] = '\0';
-        int leftSpeed = atoi(leftSpeedBuffer);
+                char rightSpeedBuffer[5];
+                memcpy(rightSpeedBuffer, readBuffer+5, 4);
+                rightSpeedBuffer[4] = '\0';
+                int rightSpeed = atoi(rightSpeedBuffer);
+                Serial.write(runMotor(leftSpeed, rightSpeed));
+        }
 
-        char rightSpeedBuffer[5];
-        memcpy(rightSpeedBuffer, readBuffer+5, 4);
-        rightSpeedBuffer[4] = '\0';
-        int rightSpeed = atoi(rightSpeedBuffer);
-        // Serial.println("command: "+String(command)+", left: "+String(leftSpeed)+", right: "+String(rightSpeed));
-
-        Serial.write(runMotor(leftSpeed, rightSpeed));
     }
 }
 
 void setup() {
     Serial.begin(9600);
     while(!Serial){}
-    Serial.println("{\"status\":\"begin\"}");
+    Serial.write("{\"id\":\"motor\"}");
     timer.setInterval(SAFETY_CADENCE_MS, safetyCheck);
     pinMode(LED_PIN, OUTPUT);
 
