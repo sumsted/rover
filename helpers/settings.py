@@ -24,7 +24,8 @@ class controller:
     test = False
     delay = .5
     safe_distance = 10
-    safe_incline = 50
+    safe_incline = 8
+    base_incline = 20
     direction_deviation_range = 2.0
 
 
