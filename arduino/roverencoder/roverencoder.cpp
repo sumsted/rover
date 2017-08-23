@@ -3,17 +3,8 @@
 
 #define LED_PIN 13
 
-#define US_FRONT_TRIG_PIN 11
-#define US_FRONT_ECHO_PIN 12
 #define US_LEFT_TRIG_PIN 3
 #define US_LEFT_ECHO_PIN 4
-#define US_LOW_TRIG_PIN 5
-#define US_LOW_ECHO_PIN 6
-
-#define US_REAR_TRIG_PIN 7
-#define US_REAR_ECHO_PIN 8
-#define US_RIGHT_TRIG_PIN 9
-#define US_RIGHT_ECHO_PIN 10
 
 #define ENC_LEFT_FRONT 2
 
@@ -24,10 +15,7 @@ bool commandProcessed = false; // check used by safety timer to tell if command 
 byte ledVal = HIGH; // safety timer flips the led on and off
 
 long left_distance=0;
-long low_distance=0;
-long front_distance=0;
-long right_distance=0;
-long rear_distance=0;
+
 long left_front_encoder=0;
 
 void doStep(byte step){
@@ -38,13 +26,13 @@ void doStep(byte step){
 
 void writeSensorData(){
     char result[100];
-    sprintf(result,"{\"left\":%ld,\"low\":%ld,\"front\":%ld,\"right\":%ld,\"rear\":%ld}",
-       left_distance, low_distance, front_distance, right_distance, rear_distance);
+    sprintf(result,"{\"left\":%ld}",
+       left_distance);
     Serial.write(result);
 }
 
 void writeId(){
-    Serial.write("{\"id\":\"encoder\"}");
+    Serial.write("{\"id\":\"ultrasonic\"}");
 }
 
 void serialHandler(){
@@ -52,8 +40,8 @@ void serialHandler(){
     String readString;
     doStep(1);
 
-    while(Serial.available() > 0){ 
-        doStep(2);      
+    while(Serial.available() > 0){
+        doStep(2);
         readString = Serial.readStringUntil('!');
     }
 
@@ -67,8 +55,18 @@ void serialHandler(){
             case 'I':
                 writeId();
                 break;
-            default:
+            case 'U':
                 writeSensorData();
+                break;
+            case 'M':
+                char pulseBuffer[5];
+                memcpy(pulseBuffer, readBuffer+1, 4);
+                pulseBuffer['\0'];
+                int pulse = atoi(pulseBuffer);
+
+
+            default:
+                writeUnknown();
                 break;
         }
     }
