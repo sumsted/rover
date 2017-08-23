@@ -38,9 +38,13 @@ void doStep(byte step){
 
 void writeSensorData(){
     char result[100];
-   sprintf(result,"{\"left\":%ld,\"low\":%ld,\"front\":%ld,\"right\":%ld,\"rear\":%ld}",
+    sprintf(result,"{\"left\":%ld,\"low\":%ld,\"front\":%ld,\"right\":%ld,\"rear\":%ld}",
        left_distance, low_distance, front_distance, right_distance, rear_distance);
-    Serial.println(result);
+    Serial.write(result);
+}
+
+void writeId(){
+    Serial.write("{\"id\":\"encoder\"}");
 }
 
 void serialHandler(){
@@ -61,7 +65,7 @@ void serialHandler(){
         char command = readBuffer[0];
         switch(command){
             case 'I':
-                Serial.write("{\"id\":\"encoder\"}");
+                writeId();
                 break;
             default:
                 writeSensorData();
@@ -74,14 +78,31 @@ void encoderCb(){
     left_front_encoder++;
 }
 
-void readUltrasonic(){
+int getDistance(int trigPin, int echoPin){
+    long duration = 0;
 
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(5);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+
+    pinMode(echoPin, INPUT);
+    duration = pulseIn(echoPin, HIGH, 8730);
+    // Serial.println("duration: "+String(duration));
+    if(duration < 0){
+        return 0;
+    } else if(duration >= 8730 || duration == 0){
+        return 150;
+    } else {
+        return (duration/2) / 29.1;
+    }
 }
 
 void setup() {
     Serial.begin(9600);
     while(!Serial){}
-    Serial.write("{\"id\":\"encoder\"}");
+    writeId();
     pinMode(LED_PIN, OUTPUT);
     pinMode(US_FRONT_TRIG_PIN, OUTPUT);
     pinMode(US_FRONT_ECHO_PIN, INPUT);
@@ -99,29 +120,6 @@ void setup() {
 //    attachInterrupt(0, encoderCb, CHANGE);
 }
 
-int getDistance(int trigPin, int echoPin){
-    long duration = 0;
-
-    digitalWrite(trigPin, LOW);
-    delayMicroseconds(5);
-    digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trigPin, LOW);
-
-    pinMode(echoPin, INPUT);
-    duration = pulseIn(echoPin, HIGH);
-    // duration = pulseIn(echoPin, HIGH,10000);
-    // Serial.println("duration: "+String(duration));
-    if(duration < 0){
-        return 0;
-    } else if(duration >= 10500){
-        return 180;
-    } else {
-        return (duration/2) / 29.1;
-    }
-}
-
-
 void loop() {
     serialHandler();
     front_distance = getDistance(US_FRONT_TRIG_PIN, US_FRONT_ECHO_PIN);
@@ -129,6 +127,10 @@ void loop() {
     left_distance = getDistance(US_LEFT_TRIG_PIN, US_LEFT_ECHO_PIN);
     right_distance = getDistance(US_RIGHT_TRIG_PIN, US_RIGHT_ECHO_PIN);
     rear_distance = getDistance(US_REAR_TRIG_PIN, US_REAR_ECHO_PIN);
+    ledVal = (ledVal==HIGH) ? LOW : HIGH;
+    delay(100);
+    digitalWrite(LED_PIN, ledVal);
+
     // writeSensorData();
-    // delay(500);
+    // delay(200);
 }
