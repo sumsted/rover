@@ -3,32 +3,25 @@
 #include "SimpleTimer.h"
 
 #define PWM_PIN_LF 9
-#define PWM_PIN_RF 6
-//#define PWM_PIN_LR 3
-//#define PWM_PIN_RR 5
-
-#define DIR_PIN_LF 2
-#define DIR_PIN_RF 4
-//#define DIR_PIN_LR 8
-//#define DIR_PIN_RR 7
+#define PWM_PIN_RF 7
 
 #define LED_PIN 13
 
 #define MOTOR_ORIENTATION_LEFT_FRONT 1
 #define MOTOR_ORIENTATION_RIGHT_FRONT 1
-//#define MOTOR_ORIENTATION_LEFT_REAR -1
-//#define MOTOR_ORIENTATION_RIGHT_REAR -1
 
 // should be duty range for cytron mdd10a
-#define PWM_FULL_FORWARD 0
-#define PWM_STOP 127
-#define PWM_FULL_BACKWARD 255
+#define PWM_FULL_FORWARD 180
+#define PWM_STOP 90
+#define PWM_FULL_BACKWARD 0
 #define PWM_TUNE_PERCENTAGE 1
 
 #define SAFETY_CADENCE_MS 500  // millisecs
 
 #define MAX_BUFFER_SIZE 50
 
+Servo leftServo;
+Servo rightServo;
 
 SimpleTimer timer;
 
@@ -38,10 +31,8 @@ byte ledVal = HIGH; // safety timer flips the led on and off
 
 void safetyCheck() {
     if(!commandProcessed){
-        analogWrite(PWM_PIN_LF, PWM_STOP);
-        analogWrite(PWM_PIN_RF, PWM_STOP);
-//        analogWrite(PWM_PIN_LR, PWM_STOP);
-//        analogWrite(PWM_PIN_RR, PWM_STOP);
+        leftServo.write(PWM_STOP);
+        rightServo.write(PWM_STOP);
     } else {
     }
     commandProcessed = false;
@@ -64,26 +55,16 @@ char *runMotor(int leftSpeed, int rightSpeed){
     int leftRearPulse = PWM_STOP;
     int rightRearPulse = PWM_STOP;
     if(leftSpeed > 100 || leftSpeed < -100 || rightSpeed > 100 || rightSpeed < -100){
-        analogWrite(PWM_PIN_LF, leftFrontPulse);
-        analogWrite(PWM_PIN_RF, rightFrontPulse);
-//        analogWrite(PWM_PIN_LR, leftRearPulse);
-//        analogWrite(PWM_PIN_RR, rightRearPulse);
+        leftServo.write(leftFrontPulse);
+        rightServo.write(rightFrontPulse);
     } else {
         // ok
         leftFrontPulse = PWM_STOP + ( PWM_STOP * (leftSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_LEFT_FRONT);
-        analogWrite(PWM_PIN_LF, leftFrontPulse);
+        leftServo.write(leftFrontPulse);
 
         // ok
         rightFrontPulse = PWM_STOP + (PWM_STOP * (rightSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_RIGHT_FRONT);
-        analogWrite(PWM_PIN_RF, rightFrontPulse);
-
-        // ok
-//        leftRearPulse = PWM_STOP + (PWM_STOP * (leftSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_LEFT_REAR);
-//        analogWrite(PWM_PIN_LR, leftRearPulse);
-
-        // ok
-//        rightRearPulse = PWM_STOP + (PWM_STOP * (rightSpeed*PWM_TUNE_PERCENTAGE)/100 * MOTOR_ORIENTATION_RIGHT_REAR);
-//        analogWrite(PWM_PIN_RR, rightRearPulse);
+        rightServo.write(rightFrontPulse);
 
         commandProcessed = true;
     }
@@ -136,49 +117,25 @@ void setup() {
     timer.setInterval(SAFETY_CADENCE_MS, safetyCheck);
     pinMode(LED_PIN, OUTPUT);
 
-    // setting up for locked antiphase for cytron mdd10a
-    // in this way it works like a frc pwm, one pwm signal
-    // to control forward and reverse
-    // the pwm from nano should be wired to dir pin on controller
-    // and the dir pin should be wired to pwm on controller
-    pinMode(DIR_PIN_LF, OUTPUT);
-    pinMode(PWM_PIN_LF, OUTPUT);
-    pinMode(DIR_PIN_RF, OUTPUT);
-    pinMode(PWM_PIN_RF, OUTPUT);
-//    pinMode(DIR_PIN_LR, OUTPUT);
-//    pinMode(PWM_PIN_LR, OUTPUT);
-//    pinMode(DIR_PIN_RR, OUTPUT);
-//    pinMode(PWM_PIN_RR, OUTPUT);
-
-    analogWrite(PWM_PIN_LF, PWM_STOP);
-    analogWrite(PWM_PIN_RF, PWM_STOP);
-//    analogWrite(PWM_PIN_LR, PWM_STOP);
-//    analogWrite(PWM_PIN_RR, PWM_STOP);
+    leftServo.attach(PWM_PIN_LF);
+    rightServo.attach(PWM_PIN_RF);
+    leftServo.write(PWM_STOP);
+    rightServo.write(PWM_STOP);
 }
 
 void testPwm(){
-    digitalWrite(DIR_PIN_LF, HIGH);
-    digitalWrite(DIR_PIN_RF, HIGH);
-//    digitalWrite(DIR_PIN_LR, HIGH);
-//    digitalWrite(DIR_PIN_RR, HIGH);
-
     int pwm_value = 0;
     int opposite_i;
     int pulse;
-    digitalWrite(DIR_PIN_LF, HIGH);
-    for(pulse=0;pulse<=255;pulse++){
-        analogWrite(PWM_PIN_LF, pulse);
-        analogWrite(PWM_PIN_RF, pulse);
-//        analogWrite(PWM_PIN_LR, pulse);
-//        analogWrite(PWM_PIN_RR, pulse);
+    for(pulse=0;pulse<=180;pulse++){
+        leftServo.write(pulse);
+        rightServo.write(pulse);
         delay(50);
         Serial.println(pulse);        
     }    
-    for(pulse=255;pulse>=0;pulse--){
-        analogWrite(PWM_PIN_LF, pulse);
-        analogWrite(PWM_PIN_RF, pulse);
-//        analogWrite(PWM_PIN_LR, pulse);
-//        analogWrite(PWM_PIN_RR, pulse);
+    for(pulse=180;pulse>=0;pulse--){
+        leftServo.write(pulse);
+        rightServo.write(pulse);
         delay(50);
         Serial.println(pulse);        
     }    
@@ -186,11 +143,6 @@ void testPwm(){
 
 void loop() {
     // testPwm();
-    digitalWrite(DIR_PIN_LF, HIGH);
-    digitalWrite(DIR_PIN_RF, HIGH);
-//    digitalWrite(DIR_PIN_LR, HIGH);
-//    digitalWrite(DIR_PIN_RR, HIGH);
-
     serialHandler();
     timer.run();
 }
