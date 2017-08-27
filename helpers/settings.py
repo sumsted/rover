@@ -13,21 +13,21 @@ def get_usb_device(name, default='/dev/ttyUSB0', device_id=None):
     try:
         results = os.popen('dmesg |grep -i "ttyUSB"| grep -i "now attached"').read().split('\n')
         for line in reversed(results):
-            print('line: %s'%line)
+            print('line: %s' % line)
             if name in line:
                 address = '/dev/'+line.split(' ')[-1]
                 if device_id is not None:
                     device = serial.Serial(address, 9600, timeout=.5)
                     device.write('I!')
                     result = device.readLine().decode()
-                    print(result)
+                    print('result: %s' % result)
                     device_info = json.loads(result)
                     if device_info['id'] == device_id:
                         return address
                 else:
                     return address
     except Exception as e:
-        print(e)
+        print('exception: '+str(e))
     return default
 
 
