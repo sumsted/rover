@@ -18,7 +18,7 @@ def get_usb_device(name, default='/dev/ttyUSB0', device_id=None):
                 address = '/dev/'+line.split(' ')[-1]
                 if device_id is not None:
                     device = serial.Serial(address, 9600, timeout=.5)
-                    device.write('I!')
+                    device.write('I!'.encode())
                     result = device.readLine().decode()
                     print('result: %s' % result)
                     device_info = json.loads(result)
