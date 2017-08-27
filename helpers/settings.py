@@ -1,13 +1,30 @@
+import json
 import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
+if True:
+    import serial
+else:
+    from mock import serial
 
 
-def get_usb_device(name, default='/dev/ttyUSB0'):
+def get_usb_device(name, default='/dev/ttyUSB0', device_id=None):
     try:
         results = os.popen('dmesg |grep -i "ttyUSB"| grep -i "now attached"').read().split('\n')
         for line in reversed(results):
             print('line: %s'%line)
             if name in line:
-                return '/dev/'+line.split(' ')[-1]
+                address = '/dev/'+line.split(' ')[-1]
+                if device_id is not None:
+                    device = serial.Serial(address, 9600, timeout=.5)
+                    device.write('I!')
+                    result = device.readLine()
+                    device_info = json.loads(result.decode())
+                    if device_info['id'] == device_id:
+                        return address
+                else:
+                    return address
     except Exception as e:
         print(e)
     return default
@@ -34,12 +51,12 @@ class encoders:
     delay = .5
     circumference_cm = 20
     rotation_ticks = 5
-    address = get_usb_device('ch341')
+    address = get_usb_device('ch341', device_id='encoder')
 
 
 class motors:
     test = False
-    address = get_usb_device('ch341')
+    address = get_usb_device('ch341', device_id='motor')
 
 
 class map:
