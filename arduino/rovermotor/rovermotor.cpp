@@ -55,6 +55,9 @@ void doStep(byte step){
     // delay(1000);
 }
 
+void writeData(){
+    
+}
 
 // TODO eventually add each individual motor, once we have encoders on all wheels and
 // are able to offer corrections

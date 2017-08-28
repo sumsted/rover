@@ -129,6 +129,8 @@ class RoverUltraEncoder:
     def clear_serial_buffer(self):
         self.nano.readline()
         self.nano.readline()
+        self.nano.readline()
+        self.nano.readline()
 
 if __name__ == '__main__':
     rc = RoverUltraEncoder()

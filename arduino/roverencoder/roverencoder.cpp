@@ -40,7 +40,7 @@ void doStep(byte step){
 
 void writeSensorData(){
     char result[100];
-    sprintf(result,"{\"left\":%ld,\"right\":%ld}",
+    sprintf(result,"{\"id\":\"encoder\",\"left\":%ld,\"right\":%ld}",
        leftFrontEncoder, rightFrontEncoder);
     Serial.println(result);
 }
@@ -67,7 +67,7 @@ void serialHandler(){
         char command = readBuffer[0];
         switch(command){
             case 'I':
-                writeId();
+                writeSensorData();
                 break;
             case 'E':
                 writeSensorData();
@@ -106,7 +106,7 @@ long writeRpm(char label, long ticks, long *prevMillis, long *prevRotations){
 void setup() {
     Serial.begin(9600);
     while(!Serial){}
-    writeId();
+    writeSensorData();
     pinMode(LED_PIN, OUTPUT);
 
     pinMode(LEFT_FRONT_ENCODER, INPUT);
