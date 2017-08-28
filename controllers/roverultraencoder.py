@@ -52,11 +52,7 @@ class RoverUltraEncoder:
         self.rs = RoverShare()
         print('address: %s' % settings.ultra.address)
         self.nano = serial.Serial(settings.ultra.address, 9600, timeout=.2)
-        self.nano.readline()
-        self.nano.readline()
-        self.nano.write('E!'.encode())
-        time.sleep(1)
-        print(self.nano.readline().decode())
+        self.clear_serial_buffer()
         self.rs.clear_ultra_queue()
         self.rs.push_status('ultraencoder: initialization complete')
 
@@ -130,9 +126,9 @@ class RoverUltraEncoder:
         self.nano.readline()
         self.nano.readline()
         self.nano.readline()
-        self.nano.readline()
-        self.nano.write('x!'.encode())
-        self.nano.write('x!'.encode())
+        # self.nano.readline()
+        # self.nano.write('x!'.encode())
+        # self.nano.write('x!'.encode())
 
 if __name__ == '__main__':
     rc = RoverUltraEncoder()
