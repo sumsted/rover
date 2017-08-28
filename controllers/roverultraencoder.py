@@ -44,10 +44,13 @@ class RoverUltraEncoder:
             'lower_deviation': 0.0
         }
         self.encoder_state = {
-            'ticks': 0,
-            'ticks_base': 0,
-            'ticks_delta': 0,
-            'distance': 0
+            'left': 0,
+            'left_base': 0,
+            'left_delta': 0,
+            'distance': 0,
+            'right': 0,
+            'right_base': 0,
+            'right_delta': 0
         }
         self.rs = RoverShare()
         print('address: %s' % settings.ultra.address)
@@ -68,11 +71,11 @@ class RoverUltraEncoder:
             self.ultra_state['rear'] = self.get_ultra(RoverUltraEncoder.REAR)
             self.ultra_state['lower_deviation'] = RoverUltraEncoder.LOWER_BASE - self.ultra_state['lower']
             self.rs.update_ultrasonic(self.ultra_state)
-
-            self.encoder_state['ticks'] = self.get_encoder()
-            self.encoder_state['ticks_delta'] = self.encoder_state['ticks'] - self.encoder_state['ticks_base']
+            encoder = self.get_encoder()
+            self.encoder_state['left'] = encoder['left']
+            self.encoder_state['left_delta'] = self.encoder_state['left'] - self.encoder_state['left_base']
             self.encoder_state['distance'] = (self.encoder_state[
-                                          'ticks_delta'] / settings.encoders.rotation_ticks) * settings.encoders.circumference_cm
+                                          'left_delta'] / settings.encoders.rotation_ticks) * settings.encoders.circumference_cm
             self.rs.update_encoders(self.encoder_state)
 
             # process any commands received, should be few
@@ -113,11 +116,12 @@ class RoverUltraEncoder:
         result = None
         encoders = None
         try:
-            self.nano.write('E!')
+            self.clear_serial_buffer()
+            self.nano.write('E!'.encode())
             result = self.nano.readline()
             print(result)
             encoders = json.loads(result.decode("utf-8"))
-            return encoders['left']
+            return encoders
         except Exception as e:
             self.rs.push_status('ultraencoder: EXCEPTION: reading encoder: result: %s, %s' % (str(result), str(e)))
             return 0
@@ -125,10 +129,6 @@ class RoverUltraEncoder:
     def clear_serial_buffer(self):
         self.nano.readline()
         self.nano.readline()
-        self.nano.readline()
-        # self.nano.readline()
-        # self.nano.write('x!'.encode())
-        # self.nano.write('x!'.encode())
 
 if __name__ == '__main__':
     rc = RoverUltraEncoder()
