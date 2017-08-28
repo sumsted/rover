@@ -54,6 +54,9 @@ class RoverUltraEncoder:
         self.nano = serial.Serial(settings.ultra.address, 9600, timeout=.2)
         self.nano.readline()
         self.nano.readline()
+        self.nano.write('E!'.encode())
+        time.sleep(1)
+        print(self.nano.readline().decode())
         self.rs.clear_ultra_queue()
         self.rs.push_status('ultraencoder: initialization complete')
 
