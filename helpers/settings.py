@@ -79,7 +79,7 @@ class ultra:
     test = False
     delay = .5
     address = get_usb_device('ch341')
-    mock_serial = True
+    mock_serial = False
 
 
 class gps:
