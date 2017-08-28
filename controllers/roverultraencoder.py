@@ -52,6 +52,8 @@ class RoverUltraEncoder:
         self.rs = RoverShare()
         print('address: %s' % settings.ultra.address)
         self.nano = serial.Serial(settings.ultra.address, 9600, timeout=.2)
+        self.nano.readline()
+        self.nano.readline()
         self.rs.clear_ultra_queue()
         self.rs.push_status('ultraencoder: initialization complete')
 
@@ -113,7 +115,8 @@ class RoverUltraEncoder:
         encoders = None
         try:
             self.nano.write('E!')
-            result = self.nano.readline() or '{"left": -1, "left": -1}'
+            result = self.nano.readline()
+            print(result)
             encoders = json.loads(result.decode("utf-8"))
             return encoders['left']
         except Exception as e:
