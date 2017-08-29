@@ -109,7 +109,8 @@ class RoverUltraEncoder:
         return result
 
     def set_encoder_base(self):
-        self.encoder_state['ticks_base'] = self.encoder_state['ticks']
+        self.encoder_state['left_base'] = self.encoder_state['left']
+        self.encoder_state['right_base'] = self.encoder_state['right']
 
     def get_encoder(self):
         # todo send command to serial post response

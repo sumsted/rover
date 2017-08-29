@@ -105,8 +105,8 @@ class pid:
 class share:
     test = False
     # initial deployment will include only one rpi
-    #host = '192.168.3.6'
-    host = '0.0.0.0'
+    host = '192.168.3.9'
+    #host = '0.0.0.0'
     port = 6379
     delay = 1.0
     command_queue_key = 'command_queue'
