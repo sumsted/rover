@@ -72,11 +72,12 @@ class RoverUltraEncoder:
             self.ultra_state['lower_deviation'] = RoverUltraEncoder.LOWER_BASE - self.ultra_state['lower']
             self.rs.update_ultrasonic(self.ultra_state)
             encoder = self.get_encoder()
-            self.encoder_state['left'] = encoder['left']
-            self.encoder_state['left_delta'] = self.encoder_state['left'] - self.encoder_state['left_base']
-            self.encoder_state['distance'] = (self.encoder_state[
-                                          'left_delta'] / settings.encoders.rotation_ticks) * settings.encoders.circumference_cm
-            self.rs.update_encoders(self.encoder_state)
+            if encoder is not None:
+                self.encoder_state['left'] = encoder['left']
+                self.encoder_state['left_delta'] = self.encoder_state['left'] - self.encoder_state['left_base']
+                self.encoder_state['distance'] = (self.encoder_state[
+                                              'left_delta'] / settings.encoders.rotation_ticks) * settings.encoders.circumference_cm
+                self.rs.update_encoders(self.encoder_state)
 
             # process any commands received, should be few
             command = self.rs.pop_ultrasonic()
@@ -113,19 +114,19 @@ class RoverUltraEncoder:
         self.encoder_state['right_base'] = self.encoder_state['right']
 
     def get_encoder(self):
-        # todo send command to serial post response
         result = None
         encoders = None
-        try:
-            self.clear_serial_buffer()
-            self.nano.write('E!'.encode())
-            result = self.nano.readline()
-            print(result)
-            encoders = json.loads(result.decode("utf-8"))
-            return encoders
-        except Exception as e:
-            self.rs.push_status('ultraencoder: EXCEPTION: reading encoder: result: %s, %s' % (str(result), str(e)))
-            return 0
+        for tries in range(5):
+            try:
+                self.clear_serial_buffer()
+                self.nano.write('E!'.encode())
+                result = self.nano.readline()
+                print(result)
+                encoders = json.loads(result.decode("utf-8"))
+                break
+            except Exception as e:
+                self.rs.push_status('ultraencoder: EXCEPTION: reading encoder: result: %s, %s' % (str(result), str(e)))
+        return encoders
 
     def clear_serial_buffer(self):
         self.nano.readline()
