@@ -105,8 +105,8 @@ class RoverController:
                         else:
                             if encoders['distance'] % 20 == 0:
                                 self.rs.push_status('controller: forward distance travelled: %d' % encoders['distance'])
-                                self.motor.move(command['speed'] + (direction_change / 2),
-                                       command['speed'] + (-1 * (direction_change / 2)))
+                            self.motor.move(command['speed'] + (direction_change / 2),
+                                    command['speed'] + (-1 * (direction_change / 2)))
 
                 elif command['command'] == 'rotate':
                     # set new direction

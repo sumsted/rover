@@ -55,9 +55,12 @@ class TestController(TestCase):
             'lower_deviation': 0.0
         })
         self.rs.update_encoders({
-            'ticks': 0,
-            'ticks_base': 0,
-            'ticks_delta': 0,
+            'right': 0,
+            'right_base': 0,
+            'right_delta': 0,
+            'left': 0,
+            'left_base': 0,
+            'left_delta': 0,
             'distance': 0
         })
 
