@@ -70,7 +70,7 @@ class RoverUltraEncoder:
             self.ultra_state['right'] = self.get_ultra(RoverUltraEncoder.RIGHT)
             self.ultra_state['rear'] = self.get_ultra(RoverUltraEncoder.REAR)
             self.ultra_state['lower_deviation'] = RoverUltraEncoder.LOWER_BASE - self.ultra_state['lower']
-            self.rs.update_ultrasonic(self.ultra_state)
+            # self.rs.update_ultrasonic(self.ultra_state)
             encoder = self.get_encoder()
             if encoder is not None:
                 self.encoder_state['left'] = encoder['left']
