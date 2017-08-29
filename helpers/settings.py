@@ -40,7 +40,7 @@ def get_environ(key):
 
 class controller:
     test = False
-    delay = 0
+    delay = .25
     safe_distance = 10
     safe_incline = 8
     base_incline = 20
