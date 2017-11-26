@@ -44,6 +44,7 @@ class RoverController:
 
     def __init__(self):
         self.rs = RoverShare()
+        self.rs.push_status('controller: initialization start')
         self.pid = Pid()
         self.map = RoverMap()
         self.motor = Motor()
