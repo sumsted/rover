@@ -50,6 +50,7 @@ class TestLed(TestCase):
             'lower': 0.0,
             'front': 0.0,
             'right': 0.0,
+            'rear': 0.0,
             'lower_deviation': 0.0
         })
         self.rs.update_encoders({
@@ -81,7 +82,7 @@ class TestLed(TestCase):
         time.sleep(duration)
 
     def test_ping(self):
-        self.rs.push_led('ping')
+        self.rs.push_led('ping', None)
         self.delay()
         self.assert_status('led: pong', 'led not responding to ping')
 

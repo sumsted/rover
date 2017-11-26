@@ -130,10 +130,13 @@ class RoverLed:
                   'rear': RoverLed.GREEN}
         ultrasonic = self.rs.get_ultrasonic()
         for pos in ['left', 'front', 'right', 'rear']:
-            if ultrasonic[pos] <= settings.controller.safe_distance:
-                colors[pos] = RoverLed.RED
-            elif ultrasonic[pos] <= settings.ultra.max:
-                colors[pos] = RoverLed.BLUE
+            try:
+                if ultrasonic[pos] <= settings.controller.safe_distance:
+                    colors[pos] = RoverLed.RED
+                elif ultrasonic[pos] <= settings.ultra.max:
+                    colors[pos] = RoverLed.BLUE
+            except KeyError as e:
+                colors[pos] = RoverLed.WHITE
         if ultrasonic['lower_deviation'] <= -settings.controller.safe_incline or \
                         ultrasonic['lower_deviation'] >= settings.controller.safe_incline:
             colors['lower'] = RoverLed.RED
