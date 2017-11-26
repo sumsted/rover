@@ -82,7 +82,8 @@ class RoverLed:
     def start(self):
         self.rs.push_status('led: begin control loop')
         while True:
-            sense = self.rs.get_sense()
+            sensors = self.rs.get_sense()
+            ultrasonic = self.rs.get_ultrasonic()
 
             # process any commands received, should be few
             command = self.rs.pop_led()
@@ -99,8 +100,8 @@ class RoverLed:
                         self.rs.push_status('led: unknown command: %s' % command['command'])
                 else:
                     self.reset_matrix()
-                    self.mark_ultrasonic()
-                    self.mark_base_direction(sense)
+                    self.mark_ultrasonic(ultrasonic)
+                    self.mark_base_direction(sensors)
                     self.draw_matrix()
                     self.heart_beat()
             except Exception as e:
@@ -125,10 +126,9 @@ class RoverLed:
                 self.sense.set_pixel(coordinates[0], coordinates[1], beat[0], beat[1], beat[2])
             time.sleep(beat[3])
 
-    def mark_ultrasonic(self):
+    def mark_ultrasonic(self, ultrasonic):
         colors = {'left': RoverLed.GREEN, 'lower': RoverLed.GREEN, 'front': RoverLed.GREEN, 'right': RoverLed.GREEN,
                   'rear': RoverLed.GREEN}
-        ultrasonic = self.rs.get_ultrasonic()
         for pos in ['left', 'front', 'right', 'rear']:
             try:
                 if ultrasonic[pos] <= settings.controller.safe_distance:
@@ -136,7 +136,7 @@ class RoverLed:
                 elif ultrasonic[pos] <= settings.ultra.max:
                     colors[pos] = RoverLed.BLUE
             except KeyError as e:
-                colors[pos] = RoverLed.WHITE
+                self.led_matrix[0][0] = RoverLed.BLUE
         if ultrasonic['lower_deviation'] <= -settings.controller.safe_incline or \
                         ultrasonic['lower_deviation'] >= settings.controller.safe_incline:
             colors['lower'] = RoverLed.RED
@@ -144,20 +144,23 @@ class RoverLed:
             for coordinates in RoverLed.ULTRASONIC_GUIDE[k]:
                 self.led_matrix[coordinates[0]][coordinates[1]] = colors[k]
 
-    def mark_base_direction(self, sense):
+    def mark_base_direction(self, sensors):
         map_dev = 10
-        if sense['direction_deviation'] < 0:
-            self.led_matrix[0][3] = RoverLed.RED
-            self.led_matrix[0][4] = RoverLed.RED
-        else:
-            self.led_matrix[0][3] = RoverLed.GREEN
-            self.led_matrix[0][4] = RoverLed.GREEN
+        try:
+            if sensors['direction_deviation'] < 0:
+                self.led_matrix[0][3] = RoverLed.RED
+                self.led_matrix[0][4] = RoverLed.RED
+            else:
+                self.led_matrix[0][3] = RoverLed.GREEN
+                self.led_matrix[0][4] = RoverLed.GREEN
 
-        for k in RoverLed.DEVIATION_GUIDE:
-            if sense['direction_deviation'] > (k - map_dev) and sense['direction_deviation'] < (k + map_dev):
-                for coordinates in RoverLed.DEVIATION_GUIDE[k]:
-                    self.led_matrix[coordinates[0]][coordinates[1]] = RoverLed.WHITE
-                break
+            for k in RoverLed.DEVIATION_GUIDE:
+                if sensors['direction_deviation'] > (k - map_dev) and sensors['direction_deviation'] < (k + map_dev):
+                    for coordinates in RoverLed.DEVIATION_GUIDE[k]:
+                        self.led_matrix[coordinates[0]][coordinates[1]] = RoverLed.WHITE
+                    break
+        except KeyError as e:
+            self.led_matrix[0][0] = RoverLed.BLUE
 
     def test_matrix(self):
         self.sense.set_rotation(90)
