@@ -5,7 +5,7 @@ import redis
 
 from helpers import settings
 
-
+# todo make singleton
 class RoverShare:
     host = settings.share.host
     port = settings.share.port
